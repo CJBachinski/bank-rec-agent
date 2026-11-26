@@ -1,0 +1,847 @@
+{
+  "month": "2026-09",
+  "company": "Tallow Creek Supply Co.",
+  "synthetic": true,
+  "note": "Invented data. Amounts are integer cents. Bank amounts are signed from the bank's side, ledger amounts from the cash account's side.",
+  "accounts": {
+    "A": {
+      "ledger_account": "1000 Operating Checking",
+      "book_open": 16248013,
+      "book_end": 2749608,
+      "bank_open": 16628438,
+      "bank_end": 3466747
+    },
+    "D": {
+      "ledger_account": "1010 Deposit Account",
+      "book_open": 5830042,
+      "book_end": 15595300,
+      "bank_open": 5830042,
+      "bank_end": 15126397
+    }
+  },
+  "groups": [
+    {
+      "group_id": "2026-09-001",
+      "category": "vendor_ach",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-040"
+      ],
+      "gl_ids": [
+        "G-09-001"
+      ]
+    },
+    {
+      "group_id": "2026-09-002",
+      "category": "vendor_ach",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-021"
+      ],
+      "gl_ids": [
+        "G-09-021"
+      ]
+    },
+    {
+      "group_id": "2026-09-003",
+      "category": "vendor_ach",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-017"
+      ],
+      "gl_ids": [
+        "G-09-022"
+      ]
+    },
+    {
+      "group_id": "2026-09-004",
+      "category": "vendor_ach",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-036"
+      ],
+      "gl_ids": [
+        "G-09-007"
+      ]
+    },
+    {
+      "group_id": "2026-09-005",
+      "category": "vendor_ach",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-038"
+      ],
+      "gl_ids": [
+        "G-09-004"
+      ]
+    },
+    {
+      "group_id": "2026-09-006",
+      "category": "vendor_ach",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-020"
+      ],
+      "gl_ids": [
+        "G-09-015"
+      ]
+    },
+    {
+      "group_id": "2026-09-007",
+      "category": "vendor_ach",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-009"
+      ],
+      "gl_ids": [
+        "G-09-032"
+      ]
+    },
+    {
+      "group_id": "2026-09-008",
+      "category": "vendor_ach",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-013"
+      ],
+      "gl_ids": [
+        "G-09-030"
+      ]
+    },
+    {
+      "group_id": "2026-09-009",
+      "category": "vendor_ach",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-031"
+      ],
+      "gl_ids": [
+        "G-09-010"
+      ]
+    },
+    {
+      "group_id": "2026-09-010",
+      "category": "vendor_ach",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-004"
+      ],
+      "gl_ids": [
+        "G-09-034"
+      ]
+    },
+    {
+      "group_id": "2026-09-011",
+      "category": "vendor_ach",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-010"
+      ],
+      "gl_ids": [
+        "G-09-033"
+      ]
+    },
+    {
+      "group_id": "2026-09-012",
+      "category": "vendor_ach",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-027"
+      ],
+      "gl_ids": [
+        "G-09-012"
+      ]
+    },
+    {
+      "group_id": "2026-09-013",
+      "category": "vendor_ach",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-039"
+      ],
+      "gl_ids": [
+        "G-09-002"
+      ]
+    },
+    {
+      "group_id": "2026-09-014",
+      "category": "vendor_ach",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-032"
+      ],
+      "gl_ids": [
+        "G-09-011"
+      ]
+    },
+    {
+      "group_id": "2026-09-015",
+      "category": "check",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-035"
+      ],
+      "gl_ids": [
+        "G-09-003"
+      ]
+    },
+    {
+      "group_id": "2026-09-016",
+      "category": "check",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-030"
+      ],
+      "gl_ids": [
+        "G-09-005"
+      ]
+    },
+    {
+      "group_id": "2026-09-017",
+      "category": "check",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-029"
+      ],
+      "gl_ids": [
+        "G-09-008"
+      ]
+    },
+    {
+      "group_id": "2026-09-018",
+      "category": "check",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-034"
+      ],
+      "gl_ids": [
+        "G-09-009"
+      ]
+    },
+    {
+      "group_id": "2026-09-019",
+      "category": "transposed_check",
+      "expected": "review",
+      "reason_code": "amount_mismatch",
+      "bank_ids": [
+        "A-09-024"
+      ],
+      "gl_ids": [
+        "G-09-013"
+      ],
+      "note": "Check cleared for 1,854.00; books show 1,845.00."
+    },
+    {
+      "group_id": "2026-09-020",
+      "category": "check",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-008"
+      ],
+      "gl_ids": [
+        "G-09-019"
+      ]
+    },
+    {
+      "group_id": "2026-09-021",
+      "category": "check",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-012"
+      ],
+      "gl_ids": [
+        "G-09-023"
+      ]
+    },
+    {
+      "group_id": "2026-09-022",
+      "category": "check",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-011"
+      ],
+      "gl_ids": [
+        "G-09-024"
+      ]
+    },
+    {
+      "group_id": "2026-09-023",
+      "category": "check",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-007"
+      ],
+      "gl_ids": [
+        "G-09-027"
+      ]
+    },
+    {
+      "group_id": "2026-09-024",
+      "category": "outstanding_check",
+      "expected": "gl_only",
+      "reason_code": "outstanding_check",
+      "bank_ids": [],
+      "gl_ids": [
+        "G-09-035"
+      ]
+    },
+    {
+      "group_id": "2026-09-025",
+      "category": "outstanding_check",
+      "expected": "gl_only",
+      "reason_code": "outstanding_check",
+      "bank_ids": [],
+      "gl_ids": [
+        "G-09-038"
+      ]
+    },
+    {
+      "group_id": "2026-09-026",
+      "category": "outstanding_check",
+      "expected": "gl_only",
+      "reason_code": "outstanding_check",
+      "bank_ids": [],
+      "gl_ids": [
+        "G-09-039"
+      ]
+    },
+    {
+      "group_id": "2026-09-027",
+      "category": "outstanding_check",
+      "expected": "gl_only",
+      "reason_code": "outstanding_check",
+      "bank_ids": [],
+      "gl_ids": [
+        "G-09-040"
+      ]
+    },
+    {
+      "group_id": "2026-09-028",
+      "category": "stale_check",
+      "expected": "gl_only",
+      "reason_code": "outstanding_check",
+      "bank_ids": [],
+      "gl_ids": [
+        "P-09-01"
+      ],
+      "note": "Outstanding since last month and still not cleared."
+    },
+    {
+      "group_id": "2026-09-029",
+      "category": "prior_period_check",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-033"
+      ],
+      "gl_ids": [
+        "P-09-02"
+      ]
+    },
+    {
+      "group_id": "2026-09-030",
+      "category": "prior_period_check",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-037"
+      ],
+      "gl_ids": [
+        "P-09-03"
+      ]
+    },
+    {
+      "group_id": "2026-09-031",
+      "category": "payroll",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-019"
+      ],
+      "gl_ids": [
+        "G-09-025"
+      ]
+    },
+    {
+      "group_id": "2026-09-032",
+      "category": "payroll",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-016"
+      ],
+      "gl_ids": [
+        "G-09-026"
+      ]
+    },
+    {
+      "group_id": "2026-09-033",
+      "category": "payroll",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-003"
+      ],
+      "gl_ids": [
+        "G-09-036"
+      ]
+    },
+    {
+      "group_id": "2026-09-034",
+      "category": "payroll",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-002"
+      ],
+      "gl_ids": [
+        "G-09-037"
+      ]
+    },
+    {
+      "group_id": "2026-09-035",
+      "category": "customer_ach",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "D-09-022"
+      ],
+      "gl_ids": [
+        "G-09-072"
+      ]
+    },
+    {
+      "group_id": "2026-09-036",
+      "category": "customer_ach",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "D-09-005"
+      ],
+      "gl_ids": [
+        "G-09-043"
+      ]
+    },
+    {
+      "group_id": "2026-09-037",
+      "category": "customer_ach",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "D-09-020"
+      ],
+      "gl_ids": [
+        "G-09-075"
+      ]
+    },
+    {
+      "group_id": "2026-09-038",
+      "category": "customer_ach",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "D-09-024"
+      ],
+      "gl_ids": [
+        "G-09-076"
+      ]
+    },
+    {
+      "group_id": "2026-09-039",
+      "category": "customer_ach",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "D-09-023"
+      ],
+      "gl_ids": [
+        "G-09-077"
+      ]
+    },
+    {
+      "group_id": "2026-09-040",
+      "category": "customer_ach",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "D-09-001"
+      ],
+      "gl_ids": [
+        "G-09-044"
+      ]
+    },
+    {
+      "group_id": "2026-09-041",
+      "category": "customer_ach",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "D-09-021"
+      ],
+      "gl_ids": [
+        "G-09-071"
+      ]
+    },
+    {
+      "group_id": "2026-09-042",
+      "category": "customer_ach",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "D-09-018"
+      ],
+      "gl_ids": [
+        "G-09-073"
+      ]
+    },
+    {
+      "group_id": "2026-09-043",
+      "category": "customer_ach",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "D-09-008"
+      ],
+      "gl_ids": [
+        "G-09-052"
+      ]
+    },
+    {
+      "group_id": "2026-09-044",
+      "category": "customer_ach",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "D-09-011"
+      ],
+      "gl_ids": [
+        "G-09-053"
+      ]
+    },
+    {
+      "group_id": "2026-09-045",
+      "category": "lookalike_pair",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-018"
+      ],
+      "gl_ids": [
+        "G-09-016"
+      ]
+    },
+    {
+      "group_id": "2026-09-046",
+      "category": "lookalike_pair",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-023"
+      ],
+      "gl_ids": [
+        "G-09-020"
+      ]
+    },
+    {
+      "group_id": "2026-09-047",
+      "category": "lookalike_pair",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "D-09-017"
+      ],
+      "gl_ids": [
+        "G-09-064"
+      ]
+    },
+    {
+      "group_id": "2026-09-048",
+      "category": "lookalike_pair",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "D-09-016"
+      ],
+      "gl_ids": [
+        "G-09-065"
+      ]
+    },
+    {
+      "group_id": "2026-09-049",
+      "category": "trade_name_date_gap",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-028"
+      ],
+      "gl_ids": [
+        "G-09-006"
+      ]
+    },
+    {
+      "group_id": "2026-09-050",
+      "category": "trade_name_date_gap",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-006"
+      ],
+      "gl_ids": [
+        "G-09-031"
+      ]
+    },
+    {
+      "group_id": "2026-09-051",
+      "category": "trade_name_date_gap",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-015"
+      ],
+      "gl_ids": [
+        "G-09-014"
+      ]
+    },
+    {
+      "group_id": "2026-09-052",
+      "category": "duplicate_entry",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-014"
+      ],
+      "gl_ids": [
+        "G-09-028"
+      ],
+      "duplicate_gl_ids": [
+        "G-09-029"
+      ],
+      "note": "The books record this payment twice; the bank paid it once. Either entry is an acceptable match; the other is a duplicate."
+    },
+    {
+      "group_id": "2026-09-053",
+      "category": "card_payout",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "D-09-006"
+      ],
+      "gl_ids": [
+        "G-09-041",
+        "G-09-042",
+        "G-09-045",
+        "G-09-046",
+        "G-09-054"
+      ]
+    },
+    {
+      "group_id": "2026-09-054",
+      "category": "card_payout",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "D-09-009"
+      ],
+      "gl_ids": [
+        "G-09-048",
+        "G-09-049",
+        "G-09-050",
+        "G-09-051",
+        "G-09-056"
+      ]
+    },
+    {
+      "group_id": "2026-09-055",
+      "category": "card_payout",
+      "expected": "review",
+      "reason_code": "unrecorded_fee",
+      "bank_ids": [
+        "D-09-014"
+      ],
+      "gl_ids": [
+        "G-09-059",
+        "G-09-060",
+        "G-09-061",
+        "G-09-062",
+        "G-09-063"
+      ],
+      "note": "Processing fee of 131.29 was never booked, so the sales do not tie to the deposit."
+    },
+    {
+      "group_id": "2026-09-056",
+      "category": "card_payout",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "D-09-019"
+      ],
+      "gl_ids": [
+        "G-09-066",
+        "G-09-067",
+        "G-09-068",
+        "G-09-069",
+        "G-09-070",
+        "G-09-074"
+      ]
+    },
+    {
+      "group_id": "2026-09-057",
+      "category": "split_deposit",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "D-09-007",
+        "D-09-010"
+      ],
+      "gl_ids": [
+        "G-09-055"
+      ]
+    },
+    {
+      "group_id": "2026-09-058",
+      "category": "split_deposit",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "D-09-002",
+        "D-09-003",
+        "D-09-004"
+      ],
+      "gl_ids": [
+        "G-09-047"
+      ]
+    },
+    {
+      "group_id": "2026-09-059",
+      "category": "check_deposit",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "D-09-012"
+      ],
+      "gl_ids": [
+        "G-09-057"
+      ]
+    },
+    {
+      "group_id": "2026-09-060",
+      "category": "returned_item",
+      "expected": "bank_only",
+      "reason_code": "returned_item",
+      "bank_ids": [
+        "D-09-015"
+      ],
+      "gl_ids": [],
+      "note": "The check from Kessler Sheet Metal bounced. The books still show it as collected."
+    },
+    {
+      "group_id": "2026-09-061",
+      "category": "bank_fee",
+      "expected": "bank_only",
+      "reason_code": "bank_fee",
+      "bank_ids": [
+        "A-09-001"
+      ],
+      "gl_ids": []
+    },
+    {
+      "group_id": "2026-09-062",
+      "category": "bank_fee",
+      "expected": "bank_only",
+      "reason_code": "bank_fee",
+      "bank_ids": [
+        "A-09-026"
+      ],
+      "gl_ids": []
+    },
+    {
+      "group_id": "2026-09-063",
+      "category": "lookalike_fee",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-022"
+      ],
+      "gl_ids": [
+        "G-09-017"
+      ]
+    },
+    {
+      "group_id": "2026-09-064",
+      "category": "interest",
+      "expected": "bank_only",
+      "reason_code": "interest",
+      "bank_ids": [
+        "D-09-025"
+      ],
+      "gl_ids": []
+    },
+    {
+      "group_id": "2026-09-065",
+      "category": "unrecognized_debit",
+      "expected": "bank_only",
+      "reason_code": "unrecognized",
+      "bank_ids": [
+        "A-09-005"
+      ],
+      "gl_ids": [],
+      "note": "No ledger entry. An outstanding check happens to share the amount."
+    },
+    {
+      "group_id": "2026-09-066",
+      "category": "transfer",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "A-09-025"
+      ],
+      "gl_ids": [
+        "G-09-018"
+      ]
+    },
+    {
+      "group_id": "2026-09-067",
+      "category": "transfer",
+      "expected": "match",
+      "reason_code": "matched",
+      "bank_ids": [
+        "D-09-013"
+      ],
+      "gl_ids": [
+        "G-09-058"
+      ]
+    },
+    {
+      "group_id": "2026-09-068",
+      "category": "deposit_in_transit",
+      "expected": "gl_only",
+      "reason_code": "deposit_in_transit",
+      "bank_ids": [],
+      "gl_ids": [
+        "G-09-078"
+      ]
+    }
+  ]
+}
