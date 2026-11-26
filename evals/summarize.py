@@ -69,6 +69,7 @@ def summarize(run_dir: Path, policy: str = pipeline.DEFAULT_POLICY, write: bool 
         main_rows = [r for r in mine if r["kind"] == "main"]
         rep_summary = {"rep": rep}
         if main_rows:
+            assert key is not None, "month rows in a split that has no month"
             conn = pipeline.prepare(key["month"])
             proposals = {r["case_id"].split(":", 1)[1]: (r["proposal"] if r["status"] == "ok" else None)
                          for r in main_rows}

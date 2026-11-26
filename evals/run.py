@@ -3,8 +3,9 @@
 A split is one month's unsettled bank lines (after the rules) plus that split's
 hallucination cases:
 
-    dev   September 2026 + hallucination dev cases     prompts are tuned here
-    test  October 2026   + hallucination test cases    reported numbers come from here
+    dev     September 2026 + hallucination dev cases     prompts are tuned here
+    test    October 2026   + hallucination test cases    reported numbers come from here
+    stress  harder trap cases only                       run once on the frozen prompt
 
 Every (case, repetition) starts from a fresh ledger, calls the same agent.decide()
 the pipeline uses, and is written to disk the moment it finishes:
@@ -52,17 +53,24 @@ class Item:
     make_conn: Callable
 
 
-def answer_key(split: str) -> dict:
+SPLITS = ("dev", "test", "stress")        # stress has trap cases only, no month of bank data
+
+
+def answer_key(split: str) -> dict | None:
+    if split not in MONTHS:
+        return None
     return json.loads((ROOT / "data" / "answer_key" / f"{MONTHS[split]}.json").read_text())
 
 
 def items(split: str) -> list[Item]:
-    month = MONTHS[split]
-    # The key is read only to label rows for reporting. It never reaches the agent.
-    category = {b: g["category"] for g in answer_key(split)["groups"] for b in g["bank_ids"]}
-    out = [Item(f"main:{r['id']}", "main", [category[r["id"]]], month, r["id"],
-                lambda: pipeline.prepare(month))
-           for r in db.open_bank(pipeline.prepare(month), month)]
+    out = []
+    if split in MONTHS:
+        month = MONTHS[split]
+        # The key is read only to label rows for reporting. It never reaches the agent.
+        category = {b: g["category"] for g in answer_key(split)["groups"] for b in g["bank_ids"]}
+        out = [Item(f"main:{r['id']}", "main", [category[r["id"]]], month, r["id"],
+                    lambda: pipeline.prepare(month))
+               for r in db.open_bank(pipeline.prepare(month), month)]
     out += [Item(c["id"], "hx", c["tags"], c["month"], c["focus"], lambda c=c: cases.conn_for(c))
             for c in cases.load(split)]
     return out
@@ -138,7 +146,8 @@ def run(name: str, split: str, llm, *, model: str, prompt: str = "v1", effort: s
 
 def make_llm(model: str, split: str):
     if model == "oracle":
-        return fakes.Oracle(fakes.Oracle.from_key(answer_key(split)).answers | cases.answers(cases.load(split)))
+        month = fakes.Oracle.from_key(answer_key(split)).answers if split in MONTHS else {}
+        return fakes.Oracle(month | cases.answers(cases.load(split)))
     stand_ins = {"null": fakes.Null, "greedy": fakes.Greedy, "hallucinator": fakes.Hallucinator}
     if model in stand_ins:
         return stand_ins[model]()
@@ -149,7 +158,7 @@ def make_llm(model: str, split: str):
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     p.add_argument("--name", required=True)
-    p.add_argument("--split", choices=list(MONTHS), required=True)
+    p.add_argument("--split", choices=list(SPLITS), required=True)
     p.add_argument("--model", required=True)
     p.add_argument("--prompt", default="v1")
     p.add_argument("--effort", default="medium")
