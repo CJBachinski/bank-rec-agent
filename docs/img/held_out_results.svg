@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 308" width="720" height="308" role="img" aria-label="Bar chart of bank lines settled correctly on the held-out month. Rules only: 61%; Haiku 5.5, first prompt: 86%; Haiku 5.5, final prompt: 99%; Sonnet 5.5, first prompt: 91%; Sonnet 5.5, final prompt: 100%; Opus 5.5, final prompt: 100%.">
+<rect x="0.5" y="0.5" width="719" height="307" rx="8" fill="#fcfcfb" stroke="#e7e6e2"/>
+<text x="24" y="34" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#0b0b0b">Bank lines settled correctly on the held-out month</text>
+<text x="24" y="56" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#52514e">October 2026, 66 bank lines, 3 runs per agent configuration</text>
+<line x1="232.0" y1="76" x2="232.0" y2="274" stroke="#e7e6e2" stroke-width="1"/>
+<text x="232.0" y="292" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" fill="#52514e" text-anchor="middle">0%</text>
+<line x1="327.0" y1="76" x2="327.0" y2="274" stroke="#e7e6e2" stroke-width="1"/>
+<text x="327.0" y="292" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" fill="#52514e" text-anchor="middle">25%</text>
+<line x1="422.0" y1="76" x2="422.0" y2="274" stroke="#e7e6e2" stroke-width="1"/>
+<text x="422.0" y="292" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" fill="#52514e" text-anchor="middle">50%</text>
+<line x1="517.0" y1="76" x2="517.0" y2="274" stroke="#e7e6e2" stroke-width="1"/>
+<text x="517.0" y="292" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" fill="#52514e" text-anchor="middle">75%</text>
+<line x1="612.0" y1="76" x2="612.0" y2="274" stroke="#e7e6e2" stroke-width="1"/>
+<text x="612.0" y="292" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" fill="#52514e" text-anchor="middle">100%</text>
+<text x="220" y="96.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#0b0b0b" text-anchor="end">Rules only</text>
+<path d="M232,84 h226.3 a4,4 0 0 1 4,4 v8 a4,4 0 0 1 -4,4 h-226.3 z" fill="#2a78d6"/>
+<text x="470.3" y="96.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">61%</text>
+<text x="220" y="136.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#0b0b0b" text-anchor="end">Haiku 5.5, first prompt</text>
+<path d="M232,124 h324.2 a4,4 0 0 1 4,4 v8 a4,4 0 0 1 -4,4 h-324.2 z" fill="#2a78d6"/>
+<text x="568.2" y="136.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">86%</text>
+<text x="220" y="166.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#0b0b0b" text-anchor="end">Haiku 5.5, final prompt</text>
+<path d="M232,154 h374.1 a4,4 0 0 1 4,4 v8 a4,4 0 0 1 -4,4 h-374.1 z" fill="#2a78d6"/>
+<text x="618.1" y="166.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">99%</text>
+<text x="220" y="196.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#0b0b0b" text-anchor="end">Sonnet 5.5, first prompt</text>
+<path d="M232,184 h343.4 a4,4 0 0 1 4,4 v8 a4,4 0 0 1 -4,4 h-343.4 z" fill="#2a78d6"/>
+<text x="587.4" y="196.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">91%</text>
+<text x="220" y="226.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#0b0b0b" text-anchor="end">Sonnet 5.5, final prompt</text>
+<path d="M232,214 h376.0 a4,4 0 0 1 4,4 v8 a4,4 0 0 1 -4,4 h-376.0 z" fill="#2a78d6"/>
+<text x="620.0" y="226.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">100%</text>
+<text x="220" y="256.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#0b0b0b" text-anchor="end">Opus 5.5, final prompt</text>
+<path d="M232,244 h376.0 a4,4 0 0 1 4,4 v8 a4,4 0 0 1 -4,4 h-376.0 z" fill="#2a78d6"/>
+<text x="620.0" y="256.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">100%</text>
+</svg>

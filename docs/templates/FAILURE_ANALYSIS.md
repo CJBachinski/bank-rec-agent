@@ -99,8 +99,19 @@ One fault was found afterwards. While checking the claims in this document again
 
 ## 9. Conclusions
 
-> **Draft.** The observations above are generated from the runs. The conclusions below are a starting point and need to be rewritten in my own words before this is published.
+**The agent did not fail the way I expected.** I built the trap set to catch a model inventing matches, ids and figures. Across {{all.neg_trials}} trap trials it did none of those. Every agent failure was a real match it declined or held. I do not read that as "the model is safe". I read it as the remaining risk being concentrated in one place, an amount that ties to the wrong party, which is also where my evidence is thinnest ({{all.blind_trials}} trials).
 
-- The model's errors in this domain ran toward caution. The system was designed so that they would, and the tests confirm the direction, not the absence of risk.
-- The most valuable testing work was reading individual failures. It found two grader errors and one prompt side effect that no aggregate score would have shown.
-- Next steps, in order: harder trap cases (more wrong-party ties, real bank descriptors), a second fictional company with different conventions, and a month of shadow running on real data.
+**The safety came from code. The prompt bought automation.** No prompt version produced a bad clear, so no prompt version can take credit for preventing one. What the prompt changed was how much work reached a person: on the held-out month, the same model left {{test.v1.sonnet.left}} of {{test.v1.sonnet.line_trials}} line-trials for review under the first prompt and {{test.v3.sonnet.left}} under the final one. The controls that would stop a bad clear are the verifier and the policy, and the careless stand-in model shows they hold on everything except the wrong-party tie. With another week I would spend it on that gap before touching the prompt again.
+
+**Reading failures beat counting them.** The totals looked fine at every stage. The three faults in my own grader and verifier, and the citation fault that version 2 introduced on the smaller model, only showed up when I opened individual cases. An evaluation is software and has bugs like any other software. I now treat a surprising score as a bug in the test until I have read the cases behind it.
+
+**A fix can break something else.** Version 2 fixed three patterns and caused a fourth on a different model. Had I re-tested only the cases the change was written for, or only the model I was tuning, I would have shipped it. Every change re-runs everything.
+
+**The small model was nearly as good once the prompt knew the client.** With the final prompt, Haiku settles {{test.v3.haiku.correct_pct}} of bank lines and Sonnet {{test.v3.sonnet.correct_pct}}, at {{test.v3.haiku.cost_per_100}} against {{test.v3.sonnet.cost_per_100}} per 100 lines. With the first prompt the gap was wider: {{test.v1.haiku.correct_pct}} against {{test.v1.sonnet.correct_pct}}. Much of a deployment is learning the client's conventions and writing them down. The more of that is done, the smaller the model that can do the job, and the stronger model's advantage is in the patterns nobody has written down yet.
+
+**What I would do next, in order.**
+
+1. Harder traps, weighted toward wrong-party ties: the same vendor on a different invoice, recurring fixed amounts, near-identical company names.
+2. A second fictional company with different conventions, to see whether the client-specific part of the prompt transfers or has to be rewritten each time.
+3. A timed manual reconciliation and a timed review, to replace the estimate in the README.
+4. A month of shadow running on real data before the agent clears anything.

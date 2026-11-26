@@ -1,0 +1,29 @@
+# Everything here runs without an API key: the tests use stand-in models, and the
+# README check re-grades saved runs. A paid model call never happens in CI.
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
+        with:
+          enable-cache: true
+      - name: Tests
+        run: uv run --frozen pytest -q
+      - name: Data and answer key match the generator
+        run: uv run --frozen python scripts/make_dataset.py --check
+      - name: Trap set matches its generator
+        run: uv run --frozen python -m evals.cases && git diff --exit-code -- evals/cases
+      - name: README and docs match the saved results
+        run: uv run --frozen python scripts/build_readme.py --check

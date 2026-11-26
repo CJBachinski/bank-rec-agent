@@ -168,6 +168,52 @@ class Report:
             return "_No failures in these runs._"
         return table(["Model", "Prompt", "Case", "Run", "Kind of item", "What went wrong", "Agent said", "Held by"], rows)
 
+    # -- chart -----------------------------------------------------------------
+    def chart_rows(self):
+        rules = json.loads((ROOT / "evals" / "results" / f"rules_only_{answer_key('test')['month']}.json").read_text())
+        rows = [("Rules only", rules["correct"], rules["lines"])]
+        for prompt, model in self.manifest["tables"]["test_month"]:
+            s = self.s(self.run("test", prompt, model))
+            c = s["main"]["pooled"]["correct"]
+            which = "first prompt" if prompt == "v1" else "final prompt"
+            rows.append((f"{NAMES[s['config']['model']].replace('Claude ', '')}, {which}", c["k"], c["n"]))
+        return rows
+
+    def chart_svg(self):
+        """One series, one hue: share of bank lines settled correctly on the held-out month."""
+        rows = self.chart_rows()
+        ink, muted, grid, bar, surface = "#0b0b0b", "#52514e", "#e7e6e2", "#2a78d6", "#fcfcfb"
+        x0, plot, row_h, thick, top = 232, 380, 30, 16, 84
+        height = top + len(rows) * row_h + 10 + 34
+        font = "font-family=\"-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif\""
+        out = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 {height}" width="720" height="{height}" '
+               f'role="img" aria-label="{self.chart_alt()}">',
+               f'<rect x="0.5" y="0.5" width="719" height="{height - 1}" rx="8" fill="{surface}" stroke="{grid}"/>',
+               f'<text x="24" y="34" {font} font-size="16" font-weight="600" fill="{ink}">'
+               f'Bank lines settled correctly on the held-out month</text>',
+               f'<text x="24" y="56" {font} font-size="12.5" fill="{muted}">'
+               f'October 2026, {rows[0][2]} bank lines, 3 runs per agent configuration</text>']
+        bottom = top + len(rows) * row_h + 10
+        for tick in (0, 25, 50, 75, 100):
+            x = x0 + plot * tick / 100
+            out.append(f'<line x1="{x:.1f}" y1="{top - 8}" x2="{x:.1f}" y2="{bottom}" stroke="{grid}" stroke-width="1"/>')
+            out.append(f'<text x="{x:.1f}" y="{bottom + 18}" {font} font-size="11.5" fill="{muted}" '
+                       f'text-anchor="middle">{tick}%</text>')
+        for i, (label, k, n) in enumerate(rows):
+            y = top + i * row_h + (10 if i else 0)            # air between the baseline and the agent rows
+            w = plot * k / n
+            mid = y + thick / 2 + 4.5
+            out.append(f'<text x="{x0 - 12}" y="{mid:.1f}" {font} font-size="13" fill="{ink}" text-anchor="end">{label}</text>')
+            out.append(f'<path d="M{x0},{y} h{w - 4:.1f} a4,4 0 0 1 4,4 v{thick - 8} a4,4 0 0 1 -4,4 h-{w - 4:.1f} z" fill="{bar}"/>')
+            out.append(f'<text x="{x0 + w + 8:.1f}" y="{mid:.1f}" {font} font-size="13" font-weight="600" fill="{ink}">'
+                       f'{pct(k, n)}</text>')
+        out.append("</svg>")
+        return "\n".join(out) + "\n"
+
+    def chart_alt(self):
+        return ("Bar chart of bank lines settled correctly on the held-out month. "
+                + "; ".join(f"{label}: {pct(k, n)}" for label, k, n in self.chart_rows()) + ".")
+
     # -- timing ----------------------------------------------------------------
     def timing(self):
         """Wording for time saved, matched to the evidence on disk (see evals/timing.time_block)."""
@@ -303,6 +349,7 @@ class Report:
         v["deploy.model"] = NAMES[self.s(self.manifest["deploy"])["config"]["model"]]
         v["deploy.run"] = self.manifest["deploy"]
         v["prices.as_of"] = "3 November 2026"
+        v["chart.alt"] = self.chart_alt()
         v.update(self.timing())
         return v
 
@@ -318,13 +365,22 @@ def render(text: str, values: dict) -> str:
 
 def main() -> int:
     check = "--check" in sys.argv
-    values = Report().values()
+    report = Report()
+    values = report.values()
     if "--values" in sys.argv:
         for k in sorted(values):
             if "\n" not in str(values[k]):
                 print(f"{k} = {values[k]}")
         return 0
     stale = []
+    chart = ROOT / "docs" / "img" / "held_out_results.svg"
+    if check:
+        if not chart.exists() or chart.read_text(encoding="utf-8") != report.chart_svg():
+            stale.append(str(chart.relative_to(ROOT)))
+    else:
+        chart.parent.mkdir(parents=True, exist_ok=True)
+        chart.write_text(report.chart_svg(), encoding="utf-8")
+        print(f"wrote {chart.relative_to(ROOT)}")
     for name, target in OUTPUTS.items():
         template = TEMPLATES / name
         if not template.exists():

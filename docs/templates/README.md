@@ -1,5 +1,9 @@
 # Bank reconciliation agent
 
+[![tests](https://github.com/CJBachinski/bank-rec-agent/actions/workflows/tests.yml/badge.svg)](https://github.com/CJBachinski/bank-rec-agent/actions/workflows/tests.yml)
+
+*A portfolio project, written as the memo I would hand a client's controller: workflow map, build, test results, rollout, return.*
+
 **To:** Controller, Tallow Creek Supply Co.
 **From:** Chris Bachinski
 **Subject:** Can an AI agent take over the monthly bank reconciliation, and how far should we trust it?
@@ -19,6 +23,10 @@ An agent built on {{deploy.model}} can do the part of the bank reconciliation th
 | API cost | {{test.v3.sonnet.cost_per_100}} per 100 bank lines |
 | Model time for the month | {{test.v3.sonnet.month_minutes}} minutes |
 | Staff time saved per month | {{timing.headline}} |
+
+![{{chart.alt}}](docs/img/held_out_results.svg)
+
+No configuration cleared a bank line against the wrong entry.
 
 Three things to know before reading further:
 
@@ -220,6 +228,8 @@ uv run python -m evals.summarize evals/runs/{{deploy.run}} --policy {{policy}}  
 uv run python scripts/reconcile.py --month {{test.month}} --from-run {{deploy.run}}   # rebuild its reconciliation
 uv run python scripts/build_readme.py --check      # README matches the results files
 ```
+
+The same four checks run on every push, with no API key, in [GitHub Actions](.github/workflows/tests.yml).
 
 A paid run needs `ANTHROPIC_API_KEY` in the environment. I keep it in a secrets manager and inject it per command:
 
