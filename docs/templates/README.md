@@ -4,8 +4,8 @@
 
 *A portfolio project, written as the memo I would hand a client's controller: workflow map, build, test results, rollout, return.*
 
-**To:** Controller, Tallow Creek Supply Co.
-**From:** Chris Bachinski
+**To:** Controller, Tallow Creek Supply Co.<br>
+**From:** Chris Bachinski<br>
 **Subject:** Can an AI agent take over the monthly bank reconciliation, and how far should we trust it?
 
 > Tallow Creek Supply Co. is fictional and every transaction in this repository is synthetic. The data is built to behave like a real month end: two bank exports in different formats, a ledger report with its headers and totals left in, names that disagree between bank and books, and the usual errors. The models, code, tests and results are real. Every number below is generated from the results files in `evals/` by `scripts/build_readme.py`. I built this with Claude Code.
