@@ -149,6 +149,8 @@ def summarize(run_dir: Path, policy: str = pipeline.DEFAULT_POLICY, write: bool 
             "mean_turns": round(statistics.mean(r["turns"] for r in rows), 2) if rows else 0.0,
             "mean_tool_calls": round(statistics.mean(r["tool_calls"] for r in rows), 2) if rows else 0.0,
             "input_tokens": sum(r["usage"]["input_tokens"] for r in rows),
+            "cache_read_tokens": sum(r["usage"]["cache_read_input_tokens"] for r in rows),
+            "cache_write_tokens": sum(r["usage"]["cache_creation_input_tokens"] for r in rows),
             "output_tokens": sum(r["usage"]["output_tokens"] for r in rows),
             "retried_requests": sum(max(0, r["attempts"] - r["turns"]) for r in rows),
         },

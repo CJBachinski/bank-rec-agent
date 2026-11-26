@@ -151,6 +151,14 @@ def test_spend_is_computed_from_recorded_tokens_at_the_models_price():
     assert cost.cost("oracle", usage) == 0.0
 
 
+def test_cached_tokens_are_priced_at_the_cache_rates_not_the_input_rate():
+    usage = {"input_tokens": 0, "output_tokens": 0, "cache_read_input_tokens": 1_000_000,
+             "cache_creation_input_tokens": 1_000_000}
+    assert cost.cost("claude-sonnet-5-5", usage) == pytest.approx(0.10 + 2.50)
+    assert cost.cost("claude-opus-5-5", usage) == pytest.approx(0.20 + 5.00)
+    assert cost.cost("claude-haiku-5-5", usage) == pytest.approx(0.01 + 0.125)
+
+
 def test_run_stops_starting_new_cases_once_the_budget_is_spent(tmp_path, monkeypatch):
     monkeypatch.setitem(cost.PRICES, "null", (1_000_000.0, 0.0))     # $100 per case at 100 input tokens
     d = go(tmp_path, fakes.Null(), budget=250.0, workers=1)

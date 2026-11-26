@@ -207,8 +207,13 @@ def decide(conn, month: str, bank_id: str, *, llm, model: str, system: str, effo
         if time.monotonic() - started > deadline_s:
             out.status = "timeout"
             return out
+        # The tools and system prompt are the same for every bank line, so they are
+        # marked as a cache breakpoint; the top-level marker caches the growing
+        # conversation between turns of this one loop.
         response, meta = llm.create(
-            model=model, max_tokens=max_tokens, system=system, messages=messages, tools=TOOLS,
+            model=model, max_tokens=max_tokens, messages=messages, tools=TOOLS,
+            system=[{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}],
+            cache_control={"type": "ephemeral"},
             output_config={"effort": effort, "format": {"type": "json_schema", "schema": DECISION_SCHEMA}})
         if not str(response.model).startswith(model):
             raise ServedModelMismatch(f"asked for {model}, served by {response.model}")

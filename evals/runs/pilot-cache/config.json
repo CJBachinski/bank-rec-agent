@@ -1,0 +1,8 @@
+{
+  "name": "pilot-cache",
+  "split": "dev",
+  "model": "claude-sonnet-5-5",
+  "prompt": "v1",
+  "effort": "medium",
+  "reps": 1
+}

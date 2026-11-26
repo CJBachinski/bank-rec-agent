@@ -117,6 +117,14 @@ def test_every_request_asks_for_the_same_schema_and_effort():
     assert all(t["strict"] for t in llm.calls[0]["tools"])
 
 
+def test_the_stable_prefix_is_marked_for_prompt_caching():
+    """Tools and system prompt are identical for every case in a run, so they are cached once."""
+    _, llm = decide([fakes.response([fakes.text(FINAL)])])
+    call = llm.calls[0]
+    assert call["system"] == [{"type": "text", "text": "You reconcile.", "cache_control": {"type": "ephemeral"}}]
+    assert call["cache_control"] == {"type": "ephemeral"}
+
+
 def test_bad_tool_arguments_come_back_as_an_error_result_and_the_loop_continues():
     steps = [fakes.response([fakes.tool_use("search_ledger", {"account": "Z"})], stop_reason="tool_use"),
              fakes.response([fakes.text(FINAL)])]
