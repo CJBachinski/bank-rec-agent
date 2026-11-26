@@ -935,7 +935,7 @@
     }
   ],
   "config": "rules_only",
-  "seconds": 0.0054,
+  "seconds": 0.0048,
   "rule_counts": {
     "cleared": 40,
     "review": 1

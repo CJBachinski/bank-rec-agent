@@ -38,7 +38,10 @@ def _verdict(truth: dict, got: dict | None) -> str:
     if truth["expected"] == "match":
         return "wrong_label" if status == "bank_only" else "left_for_person"
     if truth["expected"] == "bank_only":
-        return "correct" if status == "bank_only" else "left_for_person"
+        # A debit nobody can identify is equally well filed as "needs an entry" or
+        # "needs a look"; a fee or interest line is not, because its entry is known.
+        ok = status == "bank_only" or (status == "review" and truth["reason_code"] == "unrecognized")
+        return "correct" if ok else "left_for_person"
     # expected review: a person must decide
     if status == "review":
         return "correct"

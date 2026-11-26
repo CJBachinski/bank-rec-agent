@@ -111,3 +111,22 @@ def test_labelling_a_real_match_as_bank_only_is_wrong_but_not_a_false_clear():
     db.add_group(conn, "2026-09", "bank_only", "agent", pair["bank_ids"], [], reason_code="unrecognized")
     (line,) = [x for x in score.score_month(conn, key)["detail"] if x["bank_id"] == pair["bank_ids"][0]]
     assert line["verdict"] == "wrong_label"
+
+
+def test_an_unrecognised_debit_sent_to_review_is_as_right_as_one_filed_bank_only():
+    """Nobody knows what it is. "Needs an entry" and "needs a look" are the same instruction."""
+    key = key_for("2026-09")
+    unknown = next(g for g in key["groups"] if g["category"] == "unrecognized_debit")
+    conn = ingest.load_month("2026-09")
+    db.add_group(conn, "2026-09", "review", "agent", unknown["bank_ids"], [], reason_code="insufficient_evidence")
+    (line,) = [x for x in score.score_month(conn, key)["detail"] if x["bank_id"] == unknown["bank_ids"][0]]
+    assert line["verdict"] == "correct"
+
+
+def test_a_bank_fee_sent_to_review_is_still_left_for_a_person():
+    key = key_for("2026-09")
+    fee = next(g for g in key["groups"] if g["category"] == "bank_fee")
+    conn = ingest.load_month("2026-09")
+    db.add_group(conn, "2026-09", "review", "agent", fee["bank_ids"], [], reason_code="insufficient_evidence")
+    (line,) = [x for x in score.score_month(conn, key)["detail"] if x["bank_id"] == fee["bank_ids"][0]]
+    assert line["verdict"] == "left_for_person"

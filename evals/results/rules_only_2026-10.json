@@ -943,7 +943,7 @@
     }
   ],
   "config": "rules_only",
-  "seconds": 0.0025,
+  "seconds": 0.003,
   "rule_counts": {
     "cleared": 39,
     "review": 1
