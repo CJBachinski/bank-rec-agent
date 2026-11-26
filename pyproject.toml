@@ -3,7 +3,9 @@ name = "bank-rec-agent"
 version = "0.1.0"
 description = "An AI agent that reconciles bank activity to the cash ledger, with the tests that show where it can and cannot be trusted"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "anthropic>=1.4",
+]
 
 [dependency-groups]
 dev = ["pytest>=8.0"]
