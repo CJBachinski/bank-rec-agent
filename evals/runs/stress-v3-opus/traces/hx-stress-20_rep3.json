@@ -1,0 +1,55 @@
+[
+ {
+  "role": "system",
+  "content": "You reconcile bank activity to the cash ledger for a small company's accountant.\n\nYou are given one bank line that the automatic rules could not clear. Decide what it is:\n\n- match: it is the same money as one or more open ledger entries. Sometimes several bank lines together are the same money as one ledger entry.\n- no_match: the bank has it and the ledger does not, for example a bank fee, interest, a returned item, or a payment nobody booked.\n- needs_review: you cannot tell, or something is wrong that a person has to decide.\n\nUse the tools to look at open ledger entries and open bank lines. Use sum_check for any arithmetic. Amounts are signed from the cash account's side: money in is positive, money out is negative.\n\nPut the bank line you were given in bank_ids. In evidence, quote the field values you relied on exactly as they appear, and name the field each one came from. A bank line has these fields: amount, date, description, check_no. A ledger entry has these: amount, date, name, memo, num, txn_type. Cite only a field the record has. How a bank item was paid (ACH, card, check) is part of its description, so quote it from there.\n\nHow this company's records behave:\n\n- Card purchases post under the merchant's trade name, often with a processor prefix such as SQ *, TST* or PAYPAL *, and up to about a week after the receipt date the bookkeeper used. The ledger carries the vendor's legal name. For a card purchase, a name that looks different is normal and is not by itself a reason to hold the item. This applies to card purchases only. An ACH or check payment to one named company is not the same money as a ledger entry for a differently named company, even when the amount is identical.\n- The bank sometimes shows one ledger deposit as several lines, one per trip to the counter or ATM. If no open ledger entry has this line's amount, look at the other open bank deposits in the same account within a few days and check whether together they add up to one ledger entry. If they do, propose the whole group, with every one of those bank lines in bank_ids.\n- Bills are occasionally entered twice. If two open ledger entries are identical (same payee, amount, date and invoice) and the bank paid once, match the bank line to one of them and say in the explanation that the other looks like a duplicate to void. Do not hold the bank line for that."
+ },
+ {
+  "role": "user",
+  "content": "{\n \"month\": \"2026-06\",\n \"accounts\": {\n  \"A\": \"1000 Operating Checking\",\n  \"D\": \"1010 Deposit Account\"\n },\n \"bank_line\": {\n  \"id\": \"A-06-049\",\n  \"account\": \"A\",\n  \"date\": \"2026-06-09\",\n  \"description\": \"ACH DEBIT PINNACLE FREIGHT LN 695946\",\n  \"amount\": \"-1,504.74\",\n  \"check_no\": \"\"\n }\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"A\",\n  \"amount_min\": 1400,\n  \"amount_max\": 1600,\n  \"date_from\": \"2026-05-20\",\n  \"date_to\": \"2026-06-30\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"G-06-725\", \"date\": \"2026-06-08\", \"txn_type\": \"Bill Payment\", \"num\": \"\", \"name\": \"Pinnacle Freight Lines\", \"memo\": \"Inv 79159\", \"amount\": \"-1,459.74\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"A\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-04-01\",\n  \"date_to\": \"2026-07-31\",\n  \"text\": \"Pinnacle\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"G-06-725\", \"date\": \"2026-06-08\", \"txn_type\": \"Bill Payment\", \"num\": \"\", \"name\": \"Pinnacle Freight Lines\", \"memo\": \"Inv 79159\", \"amount\": \"-1,459.74\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "sum_check",
+  "content": "{\n  \"bank_ids\": [\n    \"A-06-049\"\n  ],\n  \"gl_ids\": [\n    \"G-06-725\"\n  ]\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"bank_total\": \"-1,504.74\", \"ledger_total\": \"-1,459.74\", \"difference\": \"-45.00\", \"ties\": false, \"unknown_ids\": []}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_bank",
+  "content": "{\n  \"account\": \"A\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-06-01\",\n  \"date_to\": \"2026-06-20\",\n  \"text\": \"Pinnacle\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"A-06-049\", \"date\": \"2026-06-09\", \"description\": \"ACH DEBIT PINNACLE FREIGHT LN 695946\", \"check_no\": \"\", \"amount\": \"-1,504.74\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\"decision\":\"needs_review\",\"bank_ids\":[\"A-06-049\"],\"gl_ids\":[],\"reason_code\":\"amount_mismatch\",\"evidence\":[{\"txn_id\":\"A-06-049\",\"field\":\"description\",\"value\":\"ACH DEBIT PINNACLE FREIGHT LN 695946\"},{\"txn_id\":\"A-06-049\",\"field\":\"amount\",\"value\":\"-1,504.74\"},{\"txn_id\":\"A-06-049\",\"field\":\"date\",\"value\":\"2026-06-09\"},{\"txn_id\":\"G-06-725\",\"field\":\"name\",\"value\":\"Pinnacle Freight Lines\"},{\"txn_id\":\"G-06-725\",\"field\":\"memo\",\"value\":\"Inv 79159\"},{\"txn_id\":\"G-06-725\",\"field\":\"amount\",\"value\":\"-1,459.74\"},{\"txn_id\":\"G-06-725\",\"field\":\"date\",\"value\":\"2026-06-08\"}],\"explanation\":\"This ACH debit to Pinnacle Freight is $45.00 more than the only open Pinnacle ledger entry, G-06-725 (bill payment for Inv 79159, -1,459.74), according to sum_check. No other open Pinnacle bank lines or ledger entries account for the difference. Someone needs to check the invoice to see if the extra $45.00 is a fee or surcharge that wasn't booked, or a wrong amount entered in the ledger.\",\"confidence\":\"medium\"}",
+  "thinking": ""
+ }
+]

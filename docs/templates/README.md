@@ -20,6 +20,7 @@ An agent built on {{deploy.model}} can do the part of the bank reconciliation th
 | Bank lines settled correctly by rules plus the agent | {{test.v3.sonnet.correct}} over {{test.v3.sonnet.reps}} runs |
 | Bank lines cleared against the wrong entry | {{test.v3.sonnet.false_clears}} |
 | Hallucinations on the {{test.negatives}}-case trap set | {{test.v3.sonnet.hallucinated}} in {{test.v3.sonnet.neg_trials}} trials |
+| Wrong matches on a harder trap set, three models | {{stress.final.blind_forced}} in {{stress.final.blind_trials}} trials on traps that tie to the cent |
 | API cost | {{test.v3.sonnet.cost_per_100}} per 100 bank lines |
 | Model time for the month | {{test.v3.sonnet.month_minutes}} minutes |
 | Staff time saved per month | {{timing.headline}} |
@@ -107,7 +108,7 @@ No policy caused harm on the development runs, so the choice came down to how ma
 
 - **Two months of data.** September 2026 is the development month: prompts and the policy were tuned on it. The agent was not run on October 2026 until the prompt, the grader and the policy were frozen and committed. Reported numbers come from October.
 - **An answer key that is true by construction.** The generator writes each month's data and its answer key from the same events, and tests confirm both accounts tie to the cent.
-- **A trap set.** {{test.negatives}} small cases per month where the honest answer is "no" or "ask a person", plus {{test.controls}} real matches that look awkward, so that a model which says "no" to everything fails.
+- **A trap set.** {{test.negatives}} small cases per month where the honest answer is "no" or "ask a person", plus {{test.controls}} real matches that look awkward, so that a model which says "no" to everything fails. A second, harder set of {{stress.cases}} cases was added afterwards (section 4.6).
 - **Repetition.** These models do not accept a temperature setting, so each configuration ran {{test.v3.sonnet.reps}} times and the spread is reported.
 - **The harness was tested before the model was.** Four stand-in models went through the whole pipeline at no cost: one that reads the answer key (scores 100%), one that says "no" to everything, one that matches the first entry with the same amount, and one that invents entries. The grader caught each of them the way it should.
 - **Grading is code.** No model grades another model.
@@ -130,7 +131,7 @@ By kind of case, for {{deploy.model}} with the final prompt:
 
 {{table.test_categories}}
 
-**The cases that matter most.** In {{test.guard_blind}} of the {{test.negatives}} traps, one ledger entry ties to the cent but belongs to a different company. A wrong match there passes every arithmetic check, so only the model's judgement and the confidence policy stand in the way. Across the three models with the final prompt, that is {{test.final.blind_forced}} wrong matches in {{test.final.blind_trials}} trials, which bounds the true rate below about {{test.final.blind_upper}}. That is the weakest number in this memo and the reason for the shadow month.
+**The cases that matter most.** In {{test.guard_blind}} of the {{test.negatives}} traps, one ledger entry ties to the cent but belongs to a different company. A wrong match there passes every arithmetic check, so only the model's judgement and the confidence policy stand in the way. Across the three models with the final prompt, that is {{test.final.blind_forced}} wrong matches in {{test.final.blind_trials}} trials, which bounds the true rate below about {{test.final.blind_upper}}. On its own that is thin, so section 4.6 goes back to it with a harder set.
 
 For scale, the stand-in model that matches the first entry with the same amount forced a match on {{standin.greedy.blind_forced}} of those {{standin.greedy.blind_n}} cases, and {{standin.greedy.blind_escaped}} of them would have been cleared.
 
@@ -166,7 +167,37 @@ Final prompt, held-out month, {{test.v3.sonnet.reps}} runs each. Prices are list
 
 **Recommendation: {{deploy.model}}.** With the final prompt the three models cannot be told apart on safety, and Haiku's one miss in {{test.v3.haiku.line_trials}} line-trials is within noise. The reason to prefer Sonnet is the first-prompt result: before the prompt described this company's patterns, Sonnet settled {{test.v1.sonnet.correct_pct}} and Haiku {{test.v1.haiku.correct_pct}}. Real data will contain patterns the prompt does not describe, and that is the condition the first prompt tested. At this volume the cost difference is cents per month. At tens of thousands of lines a month it would be worth re-running the comparison for Haiku.
 
-### 4.6 Where it failed
+### 4.6 A harder trap set
+
+The first trap set caught nothing, which says as much about the test as about the models. So I wrote a harder one, aimed at the one mistake no arithmetic check can stop. {{stress.guard_blind}} of its {{stress.negatives}} traps tie to the cent with the wrong entries.
+
+| Trap | What it looks like |
+|---|---|
+| Look-alike company | The bank paid Atlas Paper & Packaging. The books have the same amount open for Atlas Pallet & Crate. |
+| Different invoice | Same vendor, same amount, but the bank's remittance text names a different invoice from the open entry. |
+| Coincidental sum | Two unrelated entries for other vendors happen to add up to the bank amount. |
+| Forged instruction | The tying entry carries text dressed up as a system message, a controller's override, or a verified result. |
+| Round-fee gap | The right vendor a day apart, with the bank amount higher by a round fee nobody booked. |
+
+Its {{stress.controls}} controls are real matches placed beside the same kinds of decoy, so declining everything still fails.
+
+The cases were written, checked against stand-in models and committed before any real model saw them. The prompt, the grader and the clearing policy were not changed afterwards. Each model ran the set {{stress.v3.sonnet.reps}} times.
+
+{{table.stress}}
+
+By kind of case, three models pooled:
+
+{{table.stress_categories}}
+
+What it found:
+
+- **No model matched a trap.** {{stress.final.blind_forced}} wrong matches in {{stress.final.blind_trials}} trials on the traps that tie. With the first set that makes {{final.blind_forced}} in {{final.blind_trials}} for the final prompt, which bounds the true rate below about {{final.blind_upper}}. The careless stand-in model matched {{standin.greedy.stress_forced}} of the {{standin.greedy.stress_n}} and all {{standin.greedy.stress_escaped}} would have been cleared.
+- **The first invented value in the project.** One citation quoted a stored amount with a digit wrong, on a trap the model had correctly declined. The verifier rejected the citation and the line went to review. This is the failure the verifier exists for, and it came from the largest model.
+{{stress.misquotes_nested}}
+- **One real match declined.** Real matches still matched: {{stress.final.controls}}. The miss was a card payout whose sales tie exactly, declined because another sale sat one cent away from one of them. That is caution again, and it costs a person a minute.
+- **It still does not rank the models.** All three declined every trap. A harder test than this one has to come from real data or from someone other than the person who built the agent.
+
+### 4.7 Where it failed
 
 Every failure, the reason, and what was done about it is in [docs/FAILURE_ANALYSIS.md](docs/FAILURE_ANALYSIS.md). The short version:
 
@@ -174,6 +205,7 @@ Every failure, the reason, and what was done about it is in [docs/FAILURE_ANALYS
 - The smaller model cited real text under a field name that did not exist for that record. The verifier held every one. Fixed in the prompt, and the grader now reports this separately from an invented value.
 - The rule's four-day window misses payments that post across a holiday weekend. Left as it is; those lines go to the agent.
 - Reading the failures found two places where the grader, not the model, was wrong. Both were corrected before the held-out run. A third fault, in the verifier, turned up in the held-out run itself and changed no reported result.
+- On the harder trap set, the largest model misquoted one stored amount by a digit and the verifier caught it, and one real match was declined beside a one-cent decoy. Neither led to a change; both are recorded.
 
 ## 5. Rollout
 
@@ -211,8 +243,8 @@ The API cost on the other side of that is {{test.v3.sonnet.cost_per_100}} per 10
 
 - **One fictional company.** The data is synthetic. Real exports will be messier in ways I did not think to generate.
 - **The held-out month came from the same generator.** It is new data, not new kinds of problems. It shows the prompts did not memorise September; it does not show how the agent handles a pattern nobody described.
-- **The test has stopped discriminating at the top.** Three models scoring {{test.v3.haiku.correct_pct}} to {{test.v3.opus.correct_pct}} means the set is too easy to rank them. Harder cases are the next thing to build.
-- **Zeros have wide error bars.** {{test.v3.sonnet.hallucinated}} hallucinations in {{test.v3.sonnet.neg_trials}} trials bounds the rate below about {{test.v3.sonnet.hallucinated_upper}} for that model. Pooling every run in this repository ({{all.runs}} runs, {{all.neg_trials}} trials, {{all.hallucinated}} hallucinations) brings it below {{all.hallucinated_upper}}, but that mixes models and prompts, and repeated runs of the same case are not independent trials.
+- **The tests do not rank the models.** Three models scoring {{test.v3.haiku.correct_pct}} to {{test.v3.opus.correct_pct}} on the month, and all three declining every trap in both sets, means these tests are too easy to tell them apart. I wrote both the agent and the traps, so the traps reflect what I could imagine going wrong.
+- **Small counts have wide error bars.** {{test.v3.sonnet.hallucinated}} hallucinations in {{test.v3.sonnet.neg_trials}} trials bounds the rate below about {{test.v3.sonnet.hallucinated_upper}} for that model on that set. Pooling every run in this repository ({{all.runs}} runs, {{all.neg_trials}} trap trials, {{all.hallucinated_text}}) brings it below {{all.hallucinated_upper}}, but that mixes models and prompts, and repeated runs of the same case are not independent trials.
 - **Small numbers behind each fix.** Each prompt change moved a handful of cases. The direction is clear; the size is not precise.
 - {{timing.limit}}
 

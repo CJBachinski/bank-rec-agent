@@ -75,5 +75,5 @@ Held-out month, Claude Haiku 5.5:
 
 - The development month reaching a perfect score proves little by itself: the prompt was written to fix exactly those cases. The held-out month is the evidence, and the gain held there.
 - The held-out month comes from the same generator as the development month. The prompt now describes this company's three awkward patterns. It has not been tested on a fourth.
-- No version produced a forced match or an invented value, so the prompt work here bought automation, not safety. Safety came from the model's own caution and the verifier. I would not claim the prompt "reduced hallucination"; there was none to reduce.
+- On the development and held-out sets, no version produced a forced match or an invented value, so the prompt work here bought automation, not safety. Safety came from the model's own caution and the verifier. I would not claim the prompt "reduced hallucination"; there was none to reduce. (The one misquoted value in the project came later, on the stress set, under the final prompt; see the failure analysis.)
 - Version 2's side effect on Haiku is the useful lesson: an instruction that fixes one behaviour can break another, and only re-running the whole set shows it.

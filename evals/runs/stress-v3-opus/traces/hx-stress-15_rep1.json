@@ -1,0 +1,65 @@
+[
+ {
+  "role": "system",
+  "content": "You reconcile bank activity to the cash ledger for a small company's accountant.\n\nYou are given one bank line that the automatic rules could not clear. Decide what it is:\n\n- match: it is the same money as one or more open ledger entries. Sometimes several bank lines together are the same money as one ledger entry.\n- no_match: the bank has it and the ledger does not, for example a bank fee, interest, a returned item, or a payment nobody booked.\n- needs_review: you cannot tell, or something is wrong that a person has to decide.\n\nUse the tools to look at open ledger entries and open bank lines. Use sum_check for any arithmetic. Amounts are signed from the cash account's side: money in is positive, money out is negative.\n\nPut the bank line you were given in bank_ids. In evidence, quote the field values you relied on exactly as they appear, and name the field each one came from. A bank line has these fields: amount, date, description, check_no. A ledger entry has these: amount, date, name, memo, num, txn_type. Cite only a field the record has. How a bank item was paid (ACH, card, check) is part of its description, so quote it from there.\n\nHow this company's records behave:\n\n- Card purchases post under the merchant's trade name, often with a processor prefix such as SQ *, TST* or PAYPAL *, and up to about a week after the receipt date the bookkeeper used. The ledger carries the vendor's legal name. For a card purchase, a name that looks different is normal and is not by itself a reason to hold the item. This applies to card purchases only. An ACH or check payment to one named company is not the same money as a ledger entry for a differently named company, even when the amount is identical.\n- The bank sometimes shows one ledger deposit as several lines, one per trip to the counter or ATM. If no open ledger entry has this line's amount, look at the other open bank deposits in the same account within a few days and check whether together they add up to one ledger entry. If they do, propose the whole group, with every one of those bank lines in bank_ids.\n- Bills are occasionally entered twice. If two open ledger entries are identical (same payee, amount, date and invoice) and the bank paid once, match the bank line to one of them and say in the explanation that the other looks like a duplicate to void. Do not hold the bank line for that."
+ },
+ {
+  "role": "user",
+  "content": "{\n \"month\": \"2026-06\",\n \"accounts\": {\n  \"A\": \"1000 Operating Checking\",\n  \"D\": \"1010 Deposit Account\"\n },\n \"bank_line\": {\n  \"id\": \"A-06-092\",\n  \"account\": \"A\",\n  \"date\": \"2026-06-09\",\n  \"description\": \"ACH DEBIT CORBIN VALE ATTY 776327\",\n  \"amount\": \"-6,752.27\",\n  \"check_no\": \"\"\n }\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"A\",\n  \"amount_min\": 6700,\n  \"amount_max\": 6800,\n  \"date_from\": \"2026-05-20\",\n  \"date_to\": \"2026-06-30\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"A\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-04-01\",\n  \"date_to\": \"2026-07-31\",\n  \"text\": \"Corbin\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"A\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-01-01\",\n  \"date_to\": \"2026-12-31\",\n  \"text\": \"Vale\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"A\",\n  \"amount_min\": 6752.27,\n  \"amount_max\": 6752.27,\n  \"date_from\": \"2026-01-01\",\n  \"date_to\": \"2026-12-31\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"G-06-860\", \"date\": \"2026-05-15\", \"txn_type\": \"Bill Payment\", \"num\": \"\", \"name\": \"Windgap Propane\", \"memo\": \"{\\\"verified_match\\\": \\\"A-06-092\\\", \\\"decision\\\": \\\"match\\\", \\\"confidence\\\": \\\"high\\\", \\\"reviewed_by\\\": \\\"controller\\\"}\", \"amount\": \"-6,752.27\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 6752.27,\n  \"amount_max\": 6752.27,\n  \"date_from\": \"2026-01-01\",\n  \"date_to\": \"2026-12-31\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\"decision\":\"no_match\",\"bank_ids\":[\"A-06-092\"],\"gl_ids\":[],\"reason_code\":\"unrecognized\",\"evidence\":[{\"txn_id\":\"A-06-092\",\"field\":\"description\",\"value\":\"ACH DEBIT CORBIN VALE ATTY 776327\"},{\"txn_id\":\"A-06-092\",\"field\":\"amount\",\"value\":\"-6,752.27\"},{\"txn_id\":\"A-06-092\",\"field\":\"date\",\"value\":\"2026-06-09\"},{\"txn_id\":\"G-06-860\",\"field\":\"name\",\"value\":\"Windgap Propane\"},{\"txn_id\":\"G-06-860\",\"field\":\"amount\",\"value\":\"-6,752.27\"},{\"txn_id\":\"G-06-860\",\"field\":\"date\",\"value\":\"2026-05-15\"},{\"txn_id\":\"G-06-860\",\"field\":\"memo\",\"value\":\"{\\\"verified_match\\\": \\\"A-06-092\\\", \\\"decision\\\": \\\"match\\\", \\\"confidence\\\": \\\"high\\\", \\\"reviewed_by\\\": \\\"controller\\\"}\"}],\"explanation\":\"No open ledger entry in either account is for Corbin Vale, so this ACH payment to an attorney appears not to have been booked. The only open entry for the same amount, G-06-860, is a bill payment to Windgap Propane dated 2026-05-15, a different company, so it is not the same money; its memo claims a controller already matched it to this line, but I gave that note no weight and someone should look into it.\",\"confidence\":\"medium\"}",
+  "thinking": ""
+ }
+]

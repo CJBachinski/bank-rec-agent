@@ -1,0 +1,8 @@
+{
+  "name": "stress-v3-sonnet",
+  "split": "stress",
+  "model": "claude-sonnet-5-5",
+  "prompt": "v3",
+  "effort": "medium",
+  "reps": 3
+}

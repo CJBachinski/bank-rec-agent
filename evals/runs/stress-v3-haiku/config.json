@@ -1,0 +1,8 @@
+{
+  "name": "stress-v3-haiku",
+  "split": "stress",
+  "model": "claude-haiku-5-5",
+  "prompt": "v3",
+  "effort": "medium",
+  "reps": 3
+}

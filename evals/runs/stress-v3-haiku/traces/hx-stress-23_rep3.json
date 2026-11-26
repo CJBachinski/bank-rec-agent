@@ -1,0 +1,45 @@
+[
+ {
+  "role": "system",
+  "content": "You reconcile bank activity to the cash ledger for a small company's accountant.\n\nYou are given one bank line that the automatic rules could not clear. Decide what it is:\n\n- match: it is the same money as one or more open ledger entries. Sometimes several bank lines together are the same money as one ledger entry.\n- no_match: the bank has it and the ledger does not, for example a bank fee, interest, a returned item, or a payment nobody booked.\n- needs_review: you cannot tell, or something is wrong that a person has to decide.\n\nUse the tools to look at open ledger entries and open bank lines. Use sum_check for any arithmetic. Amounts are signed from the cash account's side: money in is positive, money out is negative.\n\nPut the bank line you were given in bank_ids. In evidence, quote the field values you relied on exactly as they appear, and name the field each one came from. A bank line has these fields: amount, date, description, check_no. A ledger entry has these: amount, date, name, memo, num, txn_type. Cite only a field the record has. How a bank item was paid (ACH, card, check) is part of its description, so quote it from there.\n\nHow this company's records behave:\n\n- Card purchases post under the merchant's trade name, often with a processor prefix such as SQ *, TST* or PAYPAL *, and up to about a week after the receipt date the bookkeeper used. The ledger carries the vendor's legal name. For a card purchase, a name that looks different is normal and is not by itself a reason to hold the item. This applies to card purchases only. An ACH or check payment to one named company is not the same money as a ledger entry for a differently named company, even when the amount is identical.\n- The bank sometimes shows one ledger deposit as several lines, one per trip to the counter or ATM. If no open ledger entry has this line's amount, look at the other open bank deposits in the same account within a few days and check whether together they add up to one ledger entry. If they do, propose the whole group, with every one of those bank lines in bank_ids.\n- Bills are occasionally entered twice. If two open ledger entries are identical (same payee, amount, date and invoice) and the bank paid once, match the bank line to one of them and say in the explanation that the other looks like a duplicate to void. Do not hold the bank line for that."
+ },
+ {
+  "role": "user",
+  "content": "{\n \"month\": \"2026-06\",\n \"accounts\": {\n  \"A\": \"1000 Operating Checking\",\n  \"D\": \"1010 Deposit Account\"\n },\n \"bank_line\": {\n  \"id\": \"A-06-074\",\n  \"account\": \"A\",\n  \"date\": \"2026-06-23\",\n  \"description\": \"ACH DEBIT FOXGLOVE PRINT INV 41333 605587\",\n  \"amount\": \"-1,035.14\",\n  \"check_no\": \"\"\n }\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"A\",\n  \"amount_min\": 1035.14,\n  \"amount_max\": 1035.14,\n  \"date_from\": \"2026-06-01\",\n  \"date_to\": \"2026-06-30\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"G-06-835\", \"date\": \"2026-06-11\", \"txn_type\": \"Bill Payment\", \"num\": \"\", \"name\": \"Foxglove Print Shop\", \"memo\": \"Inv 82349\", \"amount\": \"-1,035.14\"}, {\"id\": \"G-06-261\", \"date\": \"2026-06-18\", \"txn_type\": \"Bill Payment\", \"num\": \"\", \"name\": \"Foxglove Print Shop\", \"memo\": \"Inv 41333\", \"amount\": \"-1,035.14\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"A\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-05-01\",\n  \"date_to\": \"2026-07-31\",\n  \"text\": \"Foxglove\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"G-06-835\", \"date\": \"2026-06-11\", \"txn_type\": \"Bill Payment\", \"num\": \"\", \"name\": \"Foxglove Print Shop\", \"memo\": \"Inv 82349\", \"amount\": \"-1,035.14\"}, {\"id\": \"G-06-261\", \"date\": \"2026-06-18\", \"txn_type\": \"Bill Payment\", \"num\": \"\", \"name\": \"Foxglove Print Shop\", \"memo\": \"Inv 41333\", \"amount\": \"-1,035.14\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_bank",
+  "content": "{\n  \"account\": \"A\",\n  \"amount_min\": 1035.14,\n  \"amount_max\": 1035.14,\n  \"date_from\": \"2026-06-01\",\n  \"date_to\": \"2026-07-31\",\n  \"text\": \"FOXGLOVE\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"A-06-074\", \"date\": \"2026-06-23\", \"description\": \"ACH DEBIT FOXGLOVE PRINT INV 41333 605587\", \"check_no\": \"\", \"amount\": \"-1,035.14\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\"decision\":\"match\",\"bank_ids\":[\"A-06-074\"],\"gl_ids\":[\"G-06-261\"],\"reason_code\":\"matched\",\"evidence\":[{\"txn_id\":\"A-06-074\",\"field\":\"amount\",\"value\":\"-1,035.14\"},{\"txn_id\":\"A-06-074\",\"field\":\"description\",\"value\":\"ACH DEBIT FOXGLOVE PRINT INV 41333 605587\"},{\"txn_id\":\"G-06-261\",\"field\":\"amount\",\"value\":\"-1,035.14\"},{\"txn_id\":\"G-06-261\",\"field\":\"name\",\"value\":\"Foxglove Print Shop\"},{\"txn_id\":\"G-06-261\",\"field\":\"memo\",\"value\":\"Inv 41333\"},{\"txn_id\":\"G-06-261\",\"field\":\"date\",\"value\":\"2026-06-18\"}],\"explanation\":\"The ACH debit cites invoice 41333 for the same amount as open ledger bill payment G-06-261 (Foxglove Print Shop, Inv 41333, 2026-06-18). The other open Foxglove entry, G-06-835, is for Inv 82349 and is a different invoice, so it is not the same money and is not a duplicate of this one.\",\"confidence\":\"high\"}",
+  "thinking": ""
+ }
+]

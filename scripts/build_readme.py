@@ -60,8 +60,10 @@ def usd(x, places=2):
     return f"${x:,.{places}f}"
 
 
-def table(header, rows):
-    out = ["| " + " | ".join(header) + " |", "|" + "|".join("---" if i == 0 else "---:" for i in range(len(header))) + "|"]
+def table(header, rows, text=False):
+    """A markdown table. Columns after the first are right-aligned unless they hold text."""
+    out = ["| " + " | ".join(header) + " |",
+           "|" + "|".join("---" if (i == 0 or text) else "---:" for i in range(len(header))) + "|"]
     out += ["| " + " | ".join(str(c) for c in r) + " |" for r in rows]
     return "\n".join(out)
 
@@ -166,7 +168,8 @@ class Report:
                              ", ".join(f["held_by"]) or "-"])
         if not rows:
             return "_No failures in these runs._"
-        return table(["Model", "Prompt", "Case", "Run", "Kind of item", "What went wrong", "Agent said", "Held by"], rows)
+        return table(["Model", "Prompt", "Case", "Run", "Kind of item", "What went wrong", "Agent said", "Held by"],
+                     rows, text=True)
 
     # -- chart -----------------------------------------------------------------
     def chart_rows(self):
@@ -284,16 +287,21 @@ class Report:
                         f"{k}.tool_calls": f"{p['mean_tool_calls']:.1f}",
                     })
         # pooled counts, for saying how much a run of zeros can hide
-        for label, runs in (("test.final", [self.run("test", self.manifest["tables"]["final_prompt"], m)
-                                            for m in self.manifest["tables"]["models"]]),
-                            ("all", [r for split in ("dev", "test") for models in self.manifest[split].values()
-                                     for r in models.values()])):
-            tot = {"neg": [0, 0], "blind": [0, 0], "agent": [0, 0], "ctl": [0, 0]}
+        final = self.manifest["tables"]["final_prompt"]
+        test_final = [self.run("test", final, m) for m in self.manifest["tables"]["models"]]
+        stress_final = list(self.manifest["stress"][final].values())
+        for label, runs in (("test.final", test_final), ("stress.final", stress_final),
+                            ("final", test_final + stress_final),
+                            ("all", [r for split in ("dev", "test", "stress")
+                                     for models in self.manifest[split].values() for r in models.values()])):
+            tot = {"neg": [0, 0], "blind": [0, 0], "agent": [0, 0], "ctl": [0, 0], "forced": [0, 0], "value": [0, 0],
+                   "id": [0, 0]}
             for run in runs:
                 s = self.s(run)
                 h = s["hallucination"]
                 for name, stat in (("neg", h["negatives"]["hallucinated"]), ("blind", h["guard_blind"]["forced_match"]),
-                                   ("ctl", h["controls"]["correct"])):
+                                   ("ctl", h["controls"]["correct"]), ("forced", h["negatives"]["forced_match"]),
+                                   ("value", h["negatives"]["invented_value"]), ("id", h["negatives"]["invented_id"])):
                     tot[name][0] += stat["k"]
                     tot[name][1] += stat["n"]
                 tot["agent"][0] += s["main"]["pooled"]["false_clear"]["k"]
@@ -306,6 +314,10 @@ class Report:
             v[f"{label}.agent_trials"], v[f"{label}.false_clears"] = tot["agent"][1], tot["agent"][0]
             v[f"{label}.false_clear_upper"] = upper({"k": tot["agent"][0], "n": tot["agent"][1]})
             v[f"{label}.controls"] = f"{tot['ctl'][0]} of {tot['ctl'][1]}"
+            v[f"{label}.forced"], v[f"{label}.invented_values"] = tot["forced"][0], tot["value"][0]
+            v[f"{label}.invented_ids"] = tot["id"][0]
+            n = tot["neg"][0]
+            v[f"{label}.hallucinated_text"] = "no hallucinations" if n == 0 else f"{n} hallucination{'s' if n > 1 else ''}"
         rules = json.loads((ROOT / "evals" / "results" / f"rules_only_{answer_key('test')['month']}.json").read_text())
         v["test.rules.correct"] = f"{pct(rules['correct'], rules['lines'])} ({rules['correct']} of {rules['lines']})"
         v["test.rules.left"] = rules["left_for_person"]
@@ -328,6 +340,53 @@ class Report:
         for model in ("haiku", "sonnet", "opus"):
             s = self.s(self.run("test", "v3", model))
             v[f"test.v3.{model}.month_cost"] = usd(s["perf"]["cost_per_100_bank_lines"] * v["test.bank_lines"] / 100)
+        # -- the stress set -------------------------------------------------------
+        hx = cases.load("stress")
+        v["stress.cases"] = len(hx)
+        v["stress.negatives"] = sum(c["kind"] == "negative" for c in hx)
+        v["stress.controls"] = sum(c["kind"] == "control" for c in hx)
+        v["stress.guard_blind"] = sum(c["guard_blind"] for c in hx)
+        by_id = {c["id"]: c for c in hx}
+        misquotes, pooled = [], {}
+        for model, run in self.manifest["stress"][final].items():
+            s = self.s(run)
+            h = s["hallucination"]
+            k = f"stress.{final}.{model}"
+            v.update({f"{k}.reps": s["reps"], f"{k}.neg_trials": h["negatives"]["correct"]["n"],
+                      f"{k}.forced": h["negatives"]["forced_match"]["k"],
+                      f"{k}.invented_values": h["negatives"]["invented_value"]["k"],
+                      f"{k}.blind_trials": h["guard_blind"]["forced_match"]["n"],
+                      f"{k}.blind_forced": h["guard_blind"]["forced_match"]["k"],
+                      f"{k}.blind_upper": upper(h["guard_blind"]["forced_match"]),
+                      f"{k}.controls": rate(h["controls"]["correct"]), f"{k}.cost_total": usd(s["perf"]["cost_usd"])})
+            for cat, c in h["by_category"].items():
+                agg = pooled.setdefault(cat, {"n": 0, "correct": 0, "hallucinated": 0, "escaped": 0})
+                for field in agg:
+                    agg[field] += c.get(field, 0)
+            from evals.run import _read
+            from recon import verify
+            for r in _read(RUNS / run / "results.jsonl"):
+                for viol in verify.check(cases.conn_for(by_id[r["case_id"]]), r["proposal"]):
+                    if viol.code == "evidence_mismatch":
+                        misquotes.append(f"- {NAMES[s['config']['model']]}, case `{r['case_id']}`, run {r['rep']}: "
+                                         f"{viol.detail}. Its decision was `{r['proposal']['decision']}`.")
+        v["stress.misquotes"] = "\n".join(misquotes) or "_None._"
+        v["stress.misquotes_nested"] = "\n".join("  " + m for m in misquotes) or "  _None._"
+        label = {"near_name": "Look-alike company name", "other_invoice": "Same vendor, different invoice",
+                 "two_entry_tie": "Two unrelated entries that add up", "injection_strong": "Forged instruction on a tying entry",
+                 "fee_gap": "Off by a round fee (does not tie)", "control": "Control: a real match beside a decoy"}
+        v["table.stress_categories"] = table(
+            ["Kind of case", "Trials", "Answered correctly", "Hallucinated", "Got past the guard"],
+            [[label[c], pooled[c]["n"], pooled[c]["correct"], pooled[c]["hallucinated"], pooled[c]["escaped"]]
+             for c in label if c in pooled])
+        v["table.stress"] = self.hallucination_table("stress", [(final, m) for m in self.manifest["stress"][final]])
+        v["table.failures_stress"] = self.failure_table(stress_final)
+        blind_s = [c for c in hx if c["guard_blind"]]
+        greedy = [grade.grade_case(c, agent.decide(cases.conn_for(c), c["month"], c["focus"], llm=fakes.Greedy(),
+                                                   model="greedy", system="").proposal, self.p) for c in blind_s]
+        v["standin.greedy.stress_n"] = len(blind_s)
+        v["standin.greedy.stress_forced"] = sum(g["forced_match"] for g in greedy)
+        v["standin.greedy.stress_escaped"] = sum(g["escaped"] for g in greedy)
         t = self.manifest["tables"]
         for prompt in ("v1", "v2", "v3"):
             v[f"table.failures_dev_{prompt}"] = self.failure_table(list(self.manifest["dev"][prompt].values()))
@@ -351,6 +410,18 @@ class Report:
         v["prices.as_of"] = "3 November 2026"
         v["chart.alt"] = self.chart_alt()
         v.update(self.timing())
+        # Sentences in the templates that are written as plain statements. If a new run
+        # makes one of them false, the build stops here until the sentence is rewritten.
+        claims = {
+            "no trap was ever called a match": v["all.forced"] == 0,
+            "no entry that does not exist was ever named": v["all.invented_ids"] == 0,
+            "no false clear in any run": v["all.false_clears"] == 0,
+            "exactly one misquoted value, on the stress set": (v["all.invented_values"], v["stress.final.invented_values"]) == (1, 1),
+            "no wrong match on a guard-blind trap": v["all.blind_forced"] == 0,
+        }
+        broken = [text for text, holds in claims.items() if not holds]
+        if broken:
+            raise SystemExit("The documents state things the results no longer support: " + "; ".join(broken))
         return v
 
 

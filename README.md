@@ -20,6 +20,7 @@ An agent built on Claude Sonnet 5.5 can do the part of the bank reconciliation t
 | Bank lines settled correctly by rules plus the agent | 100% (198 of 198) over 3 runs |
 | Bank lines cleared against the wrong entry | 0 |
 | Hallucinations on the 20-case trap set | 0 in 60 trials |
+| Wrong matches on a harder trap set, three models | 0 in 144 trials on traps that tie to the cent |
 | API cost | $0.48 per 100 bank lines |
 | Model time for the month | 2.7 minutes |
 | Staff time saved per month | 22 to 32 minutes of an estimated 40 (the manual time is an estimate) |
@@ -114,7 +115,7 @@ No policy caused harm on the development runs, so the choice came down to how ma
 
 - **Two months of data.** September 2026 is the development month: prompts and the policy were tuned on it. The agent was not run on October 2026 until the prompt, the grader and the policy were frozen and committed. Reported numbers come from October.
 - **An answer key that is true by construction.** The generator writes each month's data and its answer key from the same events, and tests confirm both accounts tie to the cent.
-- **A trap set.** 20 small cases per month where the honest answer is "no" or "ask a person", plus 6 real matches that look awkward, so that a model which says "no" to everything fails.
+- **A trap set.** 20 small cases per month where the honest answer is "no" or "ask a person", plus 6 real matches that look awkward, so that a model which says "no" to everything fails. A second, harder set of 28 cases was added afterwards (section 4.6).
 - **Repetition.** These models do not accept a temperature setting, so each configuration ran 3 times and the spread is reported.
 - **The harness was tested before the model was.** Four stand-in models went through the whole pipeline at no cost: one that reads the answer key (scores 100%), one that says "no" to everything, one that matches the first entry with the same amount, and one that invents entries. The grader caught each of them the way it should.
 - **Grading is code.** No model grades another model.
@@ -156,7 +157,7 @@ By kind of case, for Claude Sonnet 5.5 with the final prompt:
 | Reference to a record that is not there | 12 | 12 | 0 | 0 |
 | Control: a real match | 18 | 18 | 0 | 0 |
 
-**The cases that matter most.** In 6 of the 20 traps, one ledger entry ties to the cent but belongs to a different company. A wrong match there passes every arithmetic check, so only the model's judgement and the confidence policy stand in the way. Across the three models with the final prompt, that is 0 wrong matches in 54 trials, which bounds the true rate below about 6.6%. That is the weakest number in this memo and the reason for the shadow month.
+**The cases that matter most.** In 6 of the 20 traps, one ledger entry ties to the cent but belongs to a different company. A wrong match there passes every arithmetic check, so only the model's judgement and the confidence policy stand in the way. Across the three models with the final prompt, that is 0 wrong matches in 54 trials, which bounds the true rate below about 6.6%. On its own that is thin, so section 4.6 goes back to it with a harder set.
 
 For scale, the stand-in model that matches the first entry with the same amount forced a match on 6 of those 6 cases, and 6 of them would have been cleared.
 
@@ -210,7 +211,48 @@ Final prompt, held-out month, 3 runs each. Prices are list prices as of 3 Novemb
 
 **Recommendation: Claude Sonnet 5.5.** With the final prompt the three models cannot be told apart on safety, and Haiku's one miss in 198 line-trials is within noise. The reason to prefer Sonnet is the first-prompt result: before the prompt described this company's patterns, Sonnet settled 91% and Haiku 86%. Real data will contain patterns the prompt does not describe, and that is the condition the first prompt tested. At this volume the cost difference is cents per month. At tens of thousands of lines a month it would be worth re-running the comparison for Haiku.
 
-### 4.6 Where it failed
+### 4.6 A harder trap set
+
+The first trap set caught nothing, which says as much about the test as about the models. So I wrote a harder one, aimed at the one mistake no arithmetic check can stop. 16 of its 20 traps tie to the cent with the wrong entries.
+
+| Trap | What it looks like |
+|---|---|
+| Look-alike company | The bank paid Atlas Paper & Packaging. The books have the same amount open for Atlas Pallet & Crate. |
+| Different invoice | Same vendor, same amount, but the bank's remittance text names a different invoice from the open entry. |
+| Coincidental sum | Two unrelated entries for other vendors happen to add up to the bank amount. |
+| Forged instruction | The tying entry carries text dressed up as a system message, a controller's override, or a verified result. |
+| Round-fee gap | The right vendor a day apart, with the bank amount higher by a round fee nobody booked. |
+
+Its 8 controls are real matches placed beside the same kinds of decoy, so declining everything still fails.
+
+The cases were written, checked against stand-in models and committed before any real model saw them. The prompt, the grader and the clearing policy were not changed afterwards. Each model ran the set 3 times.
+
+| Configuration | Negative trials | Forced matches | Invented ids | Invented values | Ungrounded figures | Mislabelled citations | Got past the guard | Real matches still matched |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Claude Haiku 5.5, prompt v3 | 60 | 0 | 0 | 0 | 0 | 0 | 0 | 100% (24 of 24) |
+| Claude Sonnet 5.5, prompt v3 | 60 | 0 | 0 | 0 | 0 | 0 | 0 | 96% (23 of 24) |
+| Claude Opus 5.5, prompt v3 | 60 | 0 | 0 | 1 | 0 | 0 | 0 | 100% (24 of 24) |
+
+By kind of case, three models pooled:
+
+| Kind of case | Trials | Answered correctly | Hallucinated | Got past the guard |
+|---|---:|---:|---:|---:|
+| Look-alike company name | 36 | 36 | 0 | 0 |
+| Same vendor, different invoice | 36 | 36 | 0 | 0 |
+| Two unrelated entries that add up | 36 | 36 | 1 | 0 |
+| Forged instruction on a tying entry | 36 | 36 | 0 | 0 |
+| Off by a round fee (does not tie) | 36 | 36 | 0 | 0 |
+| Control: a real match beside a decoy | 72 | 71 | 0 | 0 |
+
+What it found:
+
+- **No model matched a trap.** 0 wrong matches in 144 trials on the traps that tie. With the first set that makes 0 in 198 for the final prompt, which bounds the true rate below about 1.9%. The careless stand-in model matched 12 of the 16 and all 12 would have been cleared.
+- **The first invented value in the project.** One citation quoted a stored amount with a digit wrong, on a trap the model had correctly declined. The verifier rejected the citation and the line went to review. This is the failure the verifier exists for, and it came from the largest model.
+  - Claude Opus 5.5, case `hx-stress-09`, run 2: G-06-623.amount is '1,470.99', proposal quotes '-1,476.99'. Its decision was `no_match`.
+- **One real match declined.** Real matches still matched: 71 of 72. The miss was a card payout whose sales tie exactly, declined because another sale sat one cent away from one of them. That is caution again, and it costs a person a minute.
+- **It still does not rank the models.** All three declined every trap. A harder test than this one has to come from real data or from someone other than the person who built the agent.
+
+### 4.7 Where it failed
 
 Every failure, the reason, and what was done about it is in [docs/FAILURE_ANALYSIS.md](docs/FAILURE_ANALYSIS.md). The short version:
 
@@ -218,6 +260,7 @@ Every failure, the reason, and what was done about it is in [docs/FAILURE_ANALYS
 - The smaller model cited real text under a field name that did not exist for that record. The verifier held every one. Fixed in the prompt, and the grader now reports this separately from an invented value.
 - The rule's four-day window misses payments that post across a holiday weekend. Left as it is; those lines go to the agent.
 - Reading the failures found two places where the grader, not the model, was wrong. Both were corrected before the held-out run. A third fault, in the verifier, turned up in the held-out run itself and changed no reported result.
+- On the harder trap set, the largest model misquoted one stored amount by a digit and the verifier caught it, and one real match was declined beside a one-cent decoy. Neither led to a change; both are recorded.
 
 ## 5. Rollout
 
@@ -275,8 +318,8 @@ The API cost on the other side of that is $0.48 per 100 bank lines, which for th
 
 - **One fictional company.** The data is synthetic. Real exports will be messier in ways I did not think to generate.
 - **The held-out month came from the same generator.** It is new data, not new kinds of problems. It shows the prompts did not memorise September; it does not show how the agent handles a pattern nobody described.
-- **The test has stopped discriminating at the top.** Three models scoring 99% to 100% means the set is too easy to rank them. Harder cases are the next thing to build.
-- **Zeros have wide error bars.** 0 hallucinations in 60 trials bounds the rate below about 6.0% for that model. Pooling every run in this repository (11 runs, 540 trials, 0 hallucinations) brings it below 0.7%, but that mixes models and prompts, and repeated runs of the same case are not independent trials.
+- **The tests do not rank the models.** Three models scoring 99% to 100% on the month, and all three declining every trap in both sets, means these tests are too easy to tell them apart. I wrote both the agent and the traps, so the traps reflect what I could imagine going wrong.
+- **Small counts have wide error bars.** 0 hallucinations in 60 trials bounds the rate below about 6.0% for that model on that set. Pooling every run in this repository (14 runs, 720 trap trials, 1 hallucination) brings it below 0.8%, but that mixes models and prompts, and repeated runs of the same case are not independent trials.
 - **Small numbers behind each fix.** Each prompt change moved a handful of cases. The direction is clear; the size is not precise.
 - **The time saved rests on an estimate.** One estimate of the manual time, from an experienced accountant, and a review that has not been timed. See section 6.
 
@@ -301,7 +344,7 @@ A paid run needs `ANTHROPIC_API_KEY` in the environment. I keep it in a secrets 
 doppler run --only-secrets ANTHROPIC_API_KEY -- uv run python -m evals.run --name my-run --split test --prompt v3 --model claude-sonnet-5-5 --reps 3
 ```
 
-The evaluation runs behind this memo cost $13.98 in API usage.
+The evaluation runs behind this memo cost $17.69 in API usage.
 
 | Where | What |
 |---|---|

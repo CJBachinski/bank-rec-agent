@@ -1,0 +1,8 @@
+{
+  "name": "stress-v3-opus",
+  "split": "stress",
+  "model": "claude-opus-5-5",
+  "prompt": "v3",
+  "effort": "medium",
+  "reps": 3
+}

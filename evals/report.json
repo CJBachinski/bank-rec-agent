@@ -1,17 +1,65 @@
 {
   "dev": {
-    "v1": {"sonnet": "dev-v1-sonnet", "haiku": "dev-v1-haiku"},
-    "v2": {"sonnet": "dev-v2-sonnet", "haiku": "dev-v2-haiku"},
-    "v3": {"sonnet": "dev-v3-sonnet", "haiku": "dev-v3-haiku"}
+    "v1": {
+      "sonnet": "dev-v1-sonnet",
+      "haiku": "dev-v1-haiku"
+    },
+    "v2": {
+      "sonnet": "dev-v2-sonnet",
+      "haiku": "dev-v2-haiku"
+    },
+    "v3": {
+      "sonnet": "dev-v3-sonnet",
+      "haiku": "dev-v3-haiku"
+    }
   },
   "test": {
-    "v1": {"sonnet": "test-v1-sonnet", "haiku": "test-v1-haiku"},
-    "v3": {"haiku": "test-v3-haiku", "sonnet": "test-v3-sonnet", "opus": "test-v3-opus"}
+    "v1": {
+      "sonnet": "test-v1-sonnet",
+      "haiku": "test-v1-haiku"
+    },
+    "v3": {
+      "haiku": "test-v3-haiku",
+      "sonnet": "test-v3-sonnet",
+      "opus": "test-v3-opus"
+    }
   },
   "tables": {
     "final_prompt": "v3",
-    "models": ["haiku", "sonnet", "opus"],
-    "test_month": [["v1", "haiku"], ["v3", "haiku"], ["v1", "sonnet"], ["v3", "sonnet"], ["v3", "opus"]]
+    "models": [
+      "haiku",
+      "sonnet",
+      "opus"
+    ],
+    "test_month": [
+      [
+        "v1",
+        "haiku"
+      ],
+      [
+        "v3",
+        "haiku"
+      ],
+      [
+        "v1",
+        "sonnet"
+      ],
+      [
+        "v3",
+        "sonnet"
+      ],
+      [
+        "v3",
+        "opus"
+      ]
+    ]
   },
-  "deploy": "test-v3-sonnet"
+  "deploy": "test-v3-sonnet",
+  "stress": {
+    "v3": {
+      "haiku": "stress-v3-haiku",
+      "sonnet": "stress-v3-sonnet",
+      "opus": "stress-v3-opus"
+    }
+  }
 }
