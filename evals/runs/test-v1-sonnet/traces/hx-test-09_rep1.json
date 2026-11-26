@@ -1,0 +1,35 @@
+[
+ {
+  "role": "system",
+  "content": "You reconcile bank activity to the cash ledger for a small company's accountant.\n\nYou are given one bank line that the automatic rules could not clear. Decide what it is:\n\n- match: it is the same money as one or more open ledger entries. Sometimes several bank lines together are the same money as one ledger entry.\n- no_match: the bank has it and the ledger does not, for example a bank fee, interest, a returned item, or a payment nobody booked.\n- needs_review: you cannot tell, or something is wrong that a person has to decide.\n\nUse the tools to look at open ledger entries and open bank lines. Use sum_check for any arithmetic. Amounts are signed from the cash account's side: money in is positive, money out is negative.\n\nPut the bank line you were given in bank_ids. In evidence, quote the field values you relied on exactly as they appear."
+ },
+ {
+  "role": "user",
+  "content": "{\n \"month\": \"2026-07\",\n \"accounts\": {\n  \"A\": \"1000 Operating Checking\",\n  \"D\": \"1010 Deposit Account\"\n },\n \"bank_line\": {\n  \"id\": \"A-07-032\",\n  \"account\": \"A\",\n  \"date\": \"2026-07-16\",\n  \"description\": \"ACH DEBIT LEHIGH G&E UTIL 172498\",\n  \"amount\": \"-3,581.15\",\n  \"check_no\": \"\"\n }\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"A\",\n  \"amount_min\": 3000,\n  \"amount_max\": 4000,\n  \"date_from\": \"2026-06-15\",\n  \"date_to\": \"2026-08-15\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"G-07-799\", \"date\": \"2026-06-19\", \"txn_type\": \"Bill Payment\", \"num\": \"\", \"name\": \"Coldspring Janitorial\", \"memo\": \"Inv 78313\", \"amount\": \"-3,581.15\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"A\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-06-01\",\n  \"date_to\": \"2026-08-31\",\n  \"text\": \"Lehigh\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"G-07-646\", \"date\": \"2026-07-11\", \"txn_type\": \"Bill Payment\", \"num\": \"\", \"name\": \"Lehigh Gas & Electric\", \"memo\": \"Inv 95282\", \"amount\": \"-4,526.85\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\"decision\":\"needs_review\",\"bank_ids\":[\"A-07-032\"],\"gl_ids\":[],\"reason_code\":\"insufficient_evidence\",\"evidence\":[{\"txn_id\":\"A-07-032\",\"field\":\"description\",\"value\":\"ACH DEBIT LEHIGH G&E UTIL 172498\"},{\"txn_id\":\"A-07-032\",\"field\":\"amount\",\"value\":\"-3,581.15\"},{\"txn_id\":\"G-07-799\",\"field\":\"name\",\"value\":\"Coldspring Janitorial\"},{\"txn_id\":\"G-07-799\",\"field\":\"amount\",\"value\":\"-3,581.15\"},{\"txn_id\":\"G-07-646\",\"field\":\"amount\",\"value\":\"-4,526.85\"}],\"explanation\":\"The only open ledger entry with the same amount (-3,581.15) is a payment to Coldspring Janitorial, a different payee from the Lehigh utility on the bank line. The only open Lehigh Gas & Electric entry, G-07-646, is for -4,526.85, so it doesn't match either. A person needs to decide whether the utility payment is unbooked or booked wrongly.\",\"confidence\":\"medium\"}",
+  "thinking": ""
+ }
+]

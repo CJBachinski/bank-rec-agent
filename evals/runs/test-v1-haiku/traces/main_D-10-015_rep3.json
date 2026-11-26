@@ -1,0 +1,45 @@
+[
+ {
+  "role": "system",
+  "content": "You reconcile bank activity to the cash ledger for a small company's accountant.\n\nYou are given one bank line that the automatic rules could not clear. Decide what it is:\n\n- match: it is the same money as one or more open ledger entries. Sometimes several bank lines together are the same money as one ledger entry.\n- no_match: the bank has it and the ledger does not, for example a bank fee, interest, a returned item, or a payment nobody booked.\n- needs_review: you cannot tell, or something is wrong that a person has to decide.\n\nUse the tools to look at open ledger entries and open bank lines. Use sum_check for any arithmetic. Amounts are signed from the cash account's side: money in is positive, money out is negative.\n\nPut the bank line you were given in bank_ids. In evidence, quote the field values you relied on exactly as they appear."
+ },
+ {
+  "role": "user",
+  "content": "{\n \"month\": \"2026-10\",\n \"accounts\": {\n  \"A\": \"1000 Operating Checking\",\n  \"D\": \"1010 Deposit Account\"\n },\n \"bank_line\": {\n  \"id\": \"D-10-015\",\n  \"account\": \"D\",\n  \"date\": \"2026-10-15\",\n  \"description\": \"OLD MILL CABINETRY PAYMENT 383241\",\n  \"amount\": \"5,600.00\",\n  \"check_no\": \"\"\n }\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 5600,\n  \"amount_max\": 5600,\n  \"date_from\": \"2026-09-01\",\n  \"date_to\": \"2026-11-30\",\n  \"text\": \"Old Mill\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"G-10-060\", \"date\": \"2026-10-15\", \"txn_type\": \"Payment\", \"num\": \"\", \"name\": \"Old Mill Cabinetry\", \"memo\": \"Inv 4735\", \"amount\": \"5,600.00\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 5600,\n  \"amount_max\": 5600,\n  \"date_from\": \"2026-09-01\",\n  \"date_to\": \"2026-11-30\",\n  \"text\": \"383241\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_bank",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 5600,\n  \"amount_max\": 5600,\n  \"date_from\": \"2026-09-01\",\n  \"date_to\": \"2026-11-30\",\n  \"text\": \"Old Mill\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"D-10-015\", \"date\": \"2026-10-15\", \"description\": \"OLD MILL CABINETRY PAYMENT 383241\", \"check_no\": \"\", \"amount\": \"5,600.00\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\"decision\":\"match\",\"bank_ids\":[\"D-10-015\"],\"gl_ids\":[\"G-10-060\"],\"reason_code\":\"matched\",\"evidence\":[{\"txn_id\":\"D-10-015\",\"field\":\"description\",\"value\":\"OLD MILL CABINETRY PAYMENT 383241\"},{\"txn_id\":\"D-10-015\",\"field\":\"amount\",\"value\":\"5,600.00\"},{\"txn_id\":\"D-10-015\",\"field\":\"date\",\"value\":\"2026-10-15\"},{\"txn_id\":\"G-10-060\",\"field\":\"name\",\"value\":\"Old Mill Cabinetry\"},{\"txn_id\":\"G-10-060\",\"field\":\"amount\",\"value\":\"5,600.00\"},{\"txn_id\":\"G-10-060\",\"field\":\"date\",\"value\":\"2026-10-15\"},{\"txn_id\":\"G-10-060\",\"field\":\"memo\",\"value\":\"Inv 4735\"},{\"txn_id\":\"G-10-060\",\"field\":\"txn_type\",\"value\":\"Payment\"}],\"explanation\":\"The bank line is a payment from Old Mill Cabinetry for 5,600.00 on 2026-10-15, and the only open ledger payment with the same name, amount and date is G-10-060 (Inv 4735). The bank text does not show the invoice number, so the link rests on payer, amount and date.\",\"confidence\":\"high\"}",
+  "thinking": ""
+ }
+]

@@ -1,0 +1,55 @@
+[
+ {
+  "role": "system",
+  "content": "You reconcile bank activity to the cash ledger for a small company's accountant.\n\nYou are given one bank line that the automatic rules could not clear. Decide what it is:\n\n- match: it is the same money as one or more open ledger entries. Sometimes several bank lines together are the same money as one ledger entry.\n- no_match: the bank has it and the ledger does not, for example a bank fee, interest, a returned item, or a payment nobody booked.\n- needs_review: you cannot tell, or something is wrong that a person has to decide.\n\nUse the tools to look at open ledger entries and open bank lines. Use sum_check for any arithmetic. Amounts are signed from the cash account's side: money in is positive, money out is negative.\n\nPut the bank line you were given in bank_ids. In evidence, quote the field values you relied on exactly as they appear."
+ },
+ {
+  "role": "user",
+  "content": "{\n \"month\": \"2026-07\",\n \"accounts\": {\n  \"A\": \"1000 Operating Checking\",\n  \"D\": \"1010 Deposit Account\"\n },\n \"bank_line\": {\n  \"id\": \"A-07-321\",\n  \"account\": \"A\",\n  \"date\": \"2026-07-10\",\n  \"description\": \"ACH DEBIT HARBORVIEW STAFFING 170444\",\n  \"amount\": \"-403.64\",\n  \"check_no\": \"\"\n }\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"A\",\n  \"amount_min\": 403.64,\n  \"amount_max\": 403.64,\n  \"date_from\": \"2026-06-01\",\n  \"date_to\": \"2026-08-31\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"A\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-06-01\",\n  \"date_to\": \"2026-08-31\",\n  \"text\": \"HARBORVIEW\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"G-07-479\", \"date\": \"2026-07-07\", \"txn_type\": \"Bill Payment\", \"num\": \"\", \"name\": \"Harborview Staffing, LLC\", \"memo\": \"Inv 31555\", \"amount\": \"-1,153.40\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_bank",
+  "content": "{\n  \"account\": \"A\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-06-01\",\n  \"date_to\": \"2026-08-31\",\n  \"text\": \"HARBORVIEW\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"A-07-321\", \"date\": \"2026-07-10\", \"description\": \"ACH DEBIT HARBORVIEW STAFFING 170444\", \"check_no\": \"\", \"amount\": \"-403.64\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "sum_check",
+  "content": "{\n  \"bank_ids\": [\n    \"A-07-321\"\n  ],\n  \"gl_ids\": [\n    \"G-07-479\"\n  ]\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"bank_total\": \"-403.64\", \"ledger_total\": \"-1,153.40\", \"difference\": \"749.76\", \"ties\": false, \"unknown_ids\": []}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\"decision\":\"needs_review\",\"bank_ids\":[\"A-07-321\"],\"gl_ids\":[],\"reason_code\":\"amount_mismatch\",\"evidence\":[{\"txn_id\":\"A-07-321\",\"field\":\"description\",\"value\":\"ACH DEBIT HARBORVIEW STAFFING 170444\"},{\"txn_id\":\"A-07-321\",\"field\":\"amount\",\"value\":\"-403.64\"},{\"txn_id\":\"G-07-479\",\"field\":\"name\",\"value\":\"Harborview Staffing, LLC\"},{\"txn_id\":\"G-07-479\",\"field\":\"memo\",\"value\":\"Inv 31555\"},{\"txn_id\":\"G-07-479\",\"field\":\"amount\",\"value\":\"-1,153.40\"}],\"explanation\":\"The bank debit of -403.64 to Harborview Staffing has no open ledger entry of the same amount. The only open Harborview entry is a bill payment of -1,153.40 (Inv 31555, 2026-07-07), which differs by 749.76, so it may be a partial payment or a different invoice and a person should decide.\",\"confidence\":\"medium\"}",
+  "thinking": ""
+ }
+]

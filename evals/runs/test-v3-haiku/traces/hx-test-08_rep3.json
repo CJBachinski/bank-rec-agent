@@ -1,0 +1,75 @@
+[
+ {
+  "role": "system",
+  "content": "You reconcile bank activity to the cash ledger for a small company's accountant.\n\nYou are given one bank line that the automatic rules could not clear. Decide what it is:\n\n- match: it is the same money as one or more open ledger entries. Sometimes several bank lines together are the same money as one ledger entry.\n- no_match: the bank has it and the ledger does not, for example a bank fee, interest, a returned item, or a payment nobody booked.\n- needs_review: you cannot tell, or something is wrong that a person has to decide.\n\nUse the tools to look at open ledger entries and open bank lines. Use sum_check for any arithmetic. Amounts are signed from the cash account's side: money in is positive, money out is negative.\n\nPut the bank line you were given in bank_ids. In evidence, quote the field values you relied on exactly as they appear, and name the field each one came from. A bank line has these fields: amount, date, description, check_no. A ledger entry has these: amount, date, name, memo, num, txn_type. Cite only a field the record has. How a bank item was paid (ACH, card, check) is part of its description, so quote it from there.\n\nHow this company's records behave:\n\n- Card purchases post under the merchant's trade name, often with a processor prefix such as SQ *, TST* or PAYPAL *, and up to about a week after the receipt date the bookkeeper used. The ledger carries the vendor's legal name. For a card purchase, a name that looks different is normal and is not by itself a reason to hold the item. This applies to card purchases only. An ACH or check payment to one named company is not the same money as a ledger entry for a differently named company, even when the amount is identical.\n- The bank sometimes shows one ledger deposit as several lines, one per trip to the counter or ATM. If no open ledger entry has this line's amount, look at the other open bank deposits in the same account within a few days and check whether together they add up to one ledger entry. If they do, propose the whole group, with every one of those bank lines in bank_ids.\n- Bills are occasionally entered twice. If two open ledger entries are identical (same payee, amount, date and invoice) and the bank paid once, match the bank line to one of them and say in the explanation that the other looks like a duplicate to void. Do not hold the bank line for that."
+ },
+ {
+  "role": "user",
+  "content": "{\n \"month\": \"2026-07\",\n \"accounts\": {\n  \"A\": \"1000 Operating Checking\",\n  \"D\": \"1010 Deposit Account\"\n },\n \"bank_line\": {\n  \"id\": \"D-07-321\",\n  \"account\": \"D\",\n  \"date\": \"2026-07-20\",\n  \"description\": \"CARD PROCESSOR PAYOUT ST-378909\",\n  \"amount\": \"5,183.53\",\n  \"check_no\": \"\"\n }\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 5183.53,\n  \"amount_max\": 5183.53,\n  \"date_from\": \"2026-06-01\",\n  \"date_to\": \"2026-08-31\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-07-01\",\n  \"date_to\": \"2026-08-10\",\n  \"text\": \"ST-378909\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_bank",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-07-01\",\n  \"date_to\": \"2026-08-10\",\n  \"text\": \"PROCESSOR\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"D-07-321\", \"date\": \"2026-07-20\", \"description\": \"CARD PROCESSOR PAYOUT ST-378909\", \"check_no\": \"\", \"amount\": \"5,183.53\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-06-15\",\n  \"date_to\": \"2026-08-31\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"G-07-462\", \"date\": \"2026-07-11\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-2708\", \"name\": \"Fairmount Restoration\", \"memo\": \"Card sale\", \"amount\": \"1,140.60\"}, {\"id\": \"G-07-291\", \"date\": \"2026-07-12\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-4502\", \"name\": \"Mercer County Schools\", \"memo\": \"Card sale\", \"amount\": \"241.16\"}, {\"id\": \"G-07-019\", \"date\": \"2026-07-17\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-2910\", \"name\": \"Walk-in customer\", \"memo\": \"Card sale\", \"amount\": \"2,138.93\"}, {\"id\": \"G-07-898\", \"date\": \"2026-07-18\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-0558\", \"name\": \"Walk-in customer\", \"memo\": \"Card sale\", \"amount\": \"1,833.68\"}, {\"id\": \"G-07-159\", \"date\": \"2026-07-20\", \"txn_type\": \"Expense\", \"num\": \"\", \"name\": \"Card processor\", \"memo\": \"Processing fees - payout 07/20\", \"amount\": \"-155.74\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_bank",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-06-15\",\n  \"date_to\": \"2026-08-31\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"D-07-321\", \"date\": \"2026-07-20\", \"description\": \"CARD PROCESSOR PAYOUT ST-378909\", \"check_no\": \"\", \"amount\": \"5,183.53\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "sum_check",
+  "content": "{\n  \"bank_ids\": [\n    \"D-07-321\"\n  ],\n  \"gl_ids\": [\n    \"G-07-462\",\n    \"G-07-291\",\n    \"G-07-019\",\n    \"G-07-898\",\n    \"G-07-159\"\n  ]\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"bank_total\": \"5,183.53\", \"ledger_total\": \"5,198.63\", \"difference\": \"-15.10\", \"ties\": false, \"unknown_ids\": []}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\"decision\":\"needs_review\",\"bank_ids\":[\"D-07-321\"],\"gl_ids\":[],\"reason_code\":\"amount_mismatch\",\"evidence\":[{\"txn_id\":\"D-07-321\",\"field\":\"amount\",\"value\":\"5,183.53\"},{\"txn_id\":\"D-07-321\",\"field\":\"description\",\"value\":\"CARD PROCESSOR PAYOUT ST-378909\"},{\"txn_id\":\"G-07-462\",\"field\":\"amount\",\"value\":\"1,140.60\"},{\"txn_id\":\"G-07-291\",\"field\":\"amount\",\"value\":\"241.16\"},{\"txn_id\":\"G-07-019\",\"field\":\"amount\",\"value\":\"2,138.93\"},{\"txn_id\":\"G-07-898\",\"field\":\"amount\",\"value\":\"1,833.68\"},{\"txn_id\":\"G-07-159\",\"field\":\"amount\",\"value\":\"-155.74\"},{\"txn_id\":\"G-07-159\",\"field\":\"memo\",\"value\":\"Processing fees - payout 07/20\"}],\"explanation\":\"The four open card sales (G-07-462, G-07-291, G-07-019, G-07-898) less the booked 155.74 processing fee (G-07-159) total 5,198.63, which is 15.10 more than the bank payout of 5,183.53; no open ledger entry or subset carries the bank amount, so the 15.10 difference needs a person to check the fee or payout detail.\",\"confidence\":\"medium\"}",
+  "thinking": ""
+ }
+]

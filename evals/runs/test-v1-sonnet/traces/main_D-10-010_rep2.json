@@ -1,0 +1,45 @@
+[
+ {
+  "role": "system",
+  "content": "You reconcile bank activity to the cash ledger for a small company's accountant.\n\nYou are given one bank line that the automatic rules could not clear. Decide what it is:\n\n- match: it is the same money as one or more open ledger entries. Sometimes several bank lines together are the same money as one ledger entry.\n- no_match: the bank has it and the ledger does not, for example a bank fee, interest, a returned item, or a payment nobody booked.\n- needs_review: you cannot tell, or something is wrong that a person has to decide.\n\nUse the tools to look at open ledger entries and open bank lines. Use sum_check for any arithmetic. Amounts are signed from the cash account's side: money in is positive, money out is negative.\n\nPut the bank line you were given in bank_ids. In evidence, quote the field values you relied on exactly as they appear."
+ },
+ {
+  "role": "user",
+  "content": "{\n \"month\": \"2026-10\",\n \"accounts\": {\n  \"A\": \"1000 Operating Checking\",\n  \"D\": \"1010 Deposit Account\"\n },\n \"bank_line\": {\n  \"id\": \"D-10-010\",\n  \"account\": \"D\",\n  \"date\": \"2026-10-09\",\n  \"description\": \"RETURNED DEPOSITED ITEM NSF 634780\",\n  \"amount\": \"-951.43\",\n  \"check_no\": \"\"\n }\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 951.43,\n  \"amount_max\": 951.43,\n  \"date_from\": \"2026-09-01\",\n  \"date_to\": \"2026-10-31\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_bank",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 951.43,\n  \"amount_max\": 951.43,\n  \"date_from\": \"2026-09-01\",\n  \"date_to\": \"2026-10-31\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"D-10-010\", \"date\": \"2026-10-09\", \"description\": \"RETURNED DEPOSITED ITEM NSF 634780\", \"check_no\": \"\", \"amount\": \"-951.43\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-10-09\",\n  \"date_to\": \"2026-10-31\",\n  \"text\": \"NSF\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\"decision\":\"no_match\",\"bank_ids\":[\"D-10-010\"],\"gl_ids\":[],\"reason_code\":\"returned_item\",\"evidence\":[{\"txn_id\":\"D-10-010\",\"field\":\"description\",\"value\":\"RETURNED DEPOSITED ITEM NSF 634780\"},{\"txn_id\":\"D-10-010\",\"field\":\"amount\",\"value\":\"-951.43\"}],\"explanation\":\"The bank shows a deposited item returned for NSF for -951.43. No open ledger entry in account D matches that amount or mentions NSF, so the return hasn't been booked.\",\"confidence\":\"high\"}",
+  "thinking": ""
+ }
+]

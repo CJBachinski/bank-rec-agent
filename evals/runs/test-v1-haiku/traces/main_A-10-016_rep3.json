@@ -1,0 +1,65 @@
+[
+ {
+  "role": "system",
+  "content": "You reconcile bank activity to the cash ledger for a small company's accountant.\n\nYou are given one bank line that the automatic rules could not clear. Decide what it is:\n\n- match: it is the same money as one or more open ledger entries. Sometimes several bank lines together are the same money as one ledger entry.\n- no_match: the bank has it and the ledger does not, for example a bank fee, interest, a returned item, or a payment nobody booked.\n- needs_review: you cannot tell, or something is wrong that a person has to decide.\n\nUse the tools to look at open ledger entries and open bank lines. Use sum_check for any arithmetic. Amounts are signed from the cash account's side: money in is positive, money out is negative.\n\nPut the bank line you were given in bank_ids. In evidence, quote the field values you relied on exactly as they appear."
+ },
+ {
+  "role": "user",
+  "content": "{\n \"month\": \"2026-10\",\n \"accounts\": {\n  \"A\": \"1000 Operating Checking\",\n  \"D\": \"1010 Deposit Account\"\n },\n \"bank_line\": {\n  \"id\": \"A-10-016\",\n  \"account\": \"A\",\n  \"date\": \"2026-10-20\",\n  \"description\": \"ACH DEBIT FOXGLOVE PRINT PAYMENT 070074\",\n  \"amount\": \"-1,875.00\",\n  \"check_no\": \"\"\n }\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"A\",\n  \"amount_min\": 1875,\n  \"amount_max\": 1875,\n  \"date_from\": \"2026-10-01\",\n  \"date_to\": \"2026-10-31\",\n  \"text\": \"Foxglove\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"G-10-024\", \"date\": \"2026-10-16\", \"txn_type\": \"Bill Payment\", \"num\": \"\", \"name\": \"Foxglove Print Shop\", \"memo\": \"Inv 04112\", \"amount\": \"-1,875.00\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"A\",\n  \"amount_min\": 1875,\n  \"amount_max\": 1875,\n  \"date_from\": \"2026-10-01\",\n  \"date_to\": \"2026-10-31\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"G-10-024\", \"date\": \"2026-10-16\", \"txn_type\": \"Bill Payment\", \"num\": \"\", \"name\": \"Foxglove Print Shop\", \"memo\": \"Inv 04112\", \"amount\": \"-1,875.00\"}, {\"id\": \"G-10-029\", \"date\": \"2026-10-19\", \"txn_type\": \"Bill Payment\", \"num\": \"\", \"name\": \"Ironbound Tool & Die\", \"memo\": \"Inv 67764\", \"amount\": \"-1,875.00\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_bank",
+  "content": "{\n  \"account\": \"A\",\n  \"amount_min\": 1875,\n  \"amount_max\": 1875,\n  \"date_from\": \"2026-10-01\",\n  \"date_to\": \"2026-10-31\",\n  \"text\": \"Foxglove\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"A-10-016\", \"date\": \"2026-10-20\", \"description\": \"ACH DEBIT FOXGLOVE PRINT PAYMENT 070074\", \"check_no\": \"\", \"amount\": \"-1,875.00\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"A\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-09-01\",\n  \"date_to\": \"2026-11-30\",\n  \"text\": \"Foxglove\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"G-10-024\", \"date\": \"2026-10-16\", \"txn_type\": \"Bill Payment\", \"num\": \"\", \"name\": \"Foxglove Print Shop\", \"memo\": \"Inv 04112\", \"amount\": \"-1,875.00\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "sum_check",
+  "content": "{\n  \"bank_ids\": [\n    \"A-10-016\"\n  ],\n  \"gl_ids\": [\n    \"G-10-024\"\n  ]\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"bank_total\": \"-1,875.00\", \"ledger_total\": \"-1,875.00\", \"difference\": \"0.00\", \"ties\": true, \"unknown_ids\": []}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\"decision\":\"match\",\"bank_ids\":[\"A-10-016\"],\"gl_ids\":[\"G-10-024\"],\"reason_code\":\"matched\",\"evidence\":[{\"txn_id\":\"A-10-016\",\"field\":\"description\",\"value\":\"ACH DEBIT FOXGLOVE PRINT PAYMENT 070074\"},{\"txn_id\":\"A-10-016\",\"field\":\"amount\",\"value\":\"-1,875.00\"},{\"txn_id\":\"G-10-024\",\"field\":\"name\",\"value\":\"Foxglove Print Shop\"},{\"txn_id\":\"G-10-024\",\"field\":\"amount\",\"value\":\"-1,875.00\"},{\"txn_id\":\"G-10-024\",\"field\":\"memo\",\"value\":\"Inv 04112\"},{\"txn_id\":\"G-10-024\",\"field\":\"txn_type\",\"value\":\"Bill Payment\"}],\"explanation\":\"The bank ACH debit to Foxglove Print for 1,875.00 matches the open Bill Payment G-10-024 to Foxglove Print Shop for the same amount, dated 2026-10-16 (four days before the bank date, consistent with ACH settlement). The other open -1,875.00 entry, G-10-029, is to Ironbound Tool & Die and does not fit the Foxglove payee.\",\"confidence\":\"high\"}",
+  "thinking": ""
+ }
+]

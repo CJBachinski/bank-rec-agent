@@ -1,0 +1,35 @@
+[
+ {
+  "role": "system",
+  "content": "You reconcile bank activity to the cash ledger for a small company's accountant.\n\nYou are given one bank line that the automatic rules could not clear. Decide what it is:\n\n- match: it is the same money as one or more open ledger entries. Sometimes several bank lines together are the same money as one ledger entry.\n- no_match: the bank has it and the ledger does not, for example a bank fee, interest, a returned item, or a payment nobody booked.\n- needs_review: you cannot tell, or something is wrong that a person has to decide.\n\nUse the tools to look at open ledger entries and open bank lines. Use sum_check for any arithmetic. Amounts are signed from the cash account's side: money in is positive, money out is negative.\n\nPut the bank line you were given in bank_ids. In evidence, quote the field values you relied on exactly as they appear."
+ },
+ {
+  "role": "user",
+  "content": "{\n \"month\": \"2026-10\",\n \"accounts\": {\n  \"A\": \"1000 Operating Checking\",\n  \"D\": \"1010 Deposit Account\"\n },\n \"bank_line\": {\n  \"id\": \"D-10-016\",\n  \"account\": \"D\",\n  \"date\": \"2026-10-16\",\n  \"description\": \"ASHBY MACHINE WKS PAYMENT 978502\",\n  \"amount\": \"5,600.00\",\n  \"check_no\": \"\"\n }\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 5600,\n  \"amount_max\": 5600,\n  \"date_from\": \"2026-09-01\",\n  \"date_to\": \"2026-11-15\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"G-10-058\", \"date\": \"2026-10-14\", \"txn_type\": \"Payment\", \"num\": \"\", \"name\": \"Ashby Machine Works\", \"memo\": \"Inv 5174\", \"amount\": \"5,600.00\"}, {\"id\": \"G-10-060\", \"date\": \"2026-10-15\", \"txn_type\": \"Payment\", \"num\": \"\", \"name\": \"Old Mill Cabinetry\", \"memo\": \"Inv 4735\", \"amount\": \"5,600.00\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-09-01\",\n  \"date_to\": \"2026-11-15\",\n  \"text\": \"Ashby\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"G-10-058\", \"date\": \"2026-10-14\", \"txn_type\": \"Payment\", \"num\": \"\", \"name\": \"Ashby Machine Works\", \"memo\": \"Inv 5174\", \"amount\": \"5,600.00\"}, {\"id\": \"G-10-066\", \"date\": \"2026-10-21\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-3350\", \"name\": \"Ashby Machine Works\", \"memo\": \"Card sale\", \"amount\": \"1,213.49\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\"decision\":\"match\",\"bank_ids\":[\"D-10-016\"],\"gl_ids\":[\"G-10-058\"],\"reason_code\":\"matched\",\"evidence\":[{\"txn_id\":\"D-10-016\",\"field\":\"description\",\"value\":\"ASHBY MACHINE WKS PAYMENT 978502\"},{\"txn_id\":\"D-10-016\",\"field\":\"amount\",\"value\":\"5,600.00\"},{\"txn_id\":\"D-10-016\",\"field\":\"date\",\"value\":\"2026-10-16\"},{\"txn_id\":\"G-10-058\",\"field\":\"name\",\"value\":\"Ashby Machine Works\"},{\"txn_id\":\"G-10-058\",\"field\":\"amount\",\"value\":\"5,600.00\"},{\"txn_id\":\"G-10-058\",\"field\":\"date\",\"value\":\"2026-10-14\"},{\"txn_id\":\"G-10-058\",\"field\":\"memo\",\"value\":\"Inv 5174\"},{\"txn_id\":\"G-10-058\",\"field\":\"txn_type\",\"value\":\"Payment\"}],\"explanation\":\"The bank line is a 5,600.00 payment from Ashby Machine Works, matching open ledger payment G-10-058 for the same customer and amount, dated two days earlier. G-10-060 also has 5,600.00 but is from Old Mill Cabinetry, so it does not fit this deposit.\",\"confidence\":\"high\"}",
+  "thinking": ""
+ }
+]

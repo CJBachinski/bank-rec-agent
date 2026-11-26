@@ -1,0 +1,45 @@
+[
+ {
+  "role": "system",
+  "content": "You reconcile bank activity to the cash ledger for a small company's accountant.\n\nYou are given one bank line that the automatic rules could not clear. Decide what it is:\n\n- match: it is the same money as one or more open ledger entries. Sometimes several bank lines together are the same money as one ledger entry.\n- no_match: the bank has it and the ledger does not, for example a bank fee, interest, a returned item, or a payment nobody booked.\n- needs_review: you cannot tell, or something is wrong that a person has to decide.\n\nUse the tools to look at open ledger entries and open bank lines. Use sum_check for any arithmetic. Amounts are signed from the cash account's side: money in is positive, money out is negative.\n\nPut the bank line you were given in bank_ids. In evidence, quote the field values you relied on exactly as they appear."
+ },
+ {
+  "role": "user",
+  "content": "{\n \"month\": \"2026-07\",\n \"accounts\": {\n  \"A\": \"1000 Operating Checking\",\n  \"D\": \"1010 Deposit Account\"\n },\n \"bank_line\": {\n  \"id\": \"D-07-178\",\n  \"account\": \"D\",\n  \"date\": \"2026-07-15\",\n  \"description\": \"CARD PROCESSOR PAYOUT ST-224332\",\n  \"amount\": \"2,373.00\",\n  \"check_no\": \"\"\n }\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-07-01\",\n  \"date_to\": \"2026-07-31\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"G-07-780\", \"date\": \"2026-07-11\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-7374\", \"name\": \"Walk-in customer\", \"memo\": \"Card sale\", \"amount\": \"421.26\"}, {\"id\": \"G-07-389\", \"date\": \"2026-07-12\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-2728\", \"name\": \"Tidewater Marine Services\", \"memo\": \"Card sale\", \"amount\": \"1,461.92\"}, {\"id\": \"G-07-606\", \"date\": \"2026-07-12\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-2788\", \"name\": \"Linden Hill Builders\", \"memo\": \"Card sale\", \"amount\": \"2,298.05\"}, {\"id\": \"G-07-748\", \"date\": \"2026-07-12\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-8144\", \"name\": \"Walk-in customer\", \"memo\": \"Card sale\", \"amount\": \"939.97\"}, {\"id\": \"G-07-472\", \"date\": \"2026-07-13\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-5553\", \"name\": \"Walk-in customer\", \"memo\": \"Card sale\", \"amount\": \"1,083.57\"}, {\"id\": \"G-07-186\", \"date\": \"2026-07-15\", \"txn_type\": \"Expense\", \"num\": \"\", \"name\": \"Card processor\", \"memo\": \"Processing fees - payout 07/15\", \"amount\": \"-71.80\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_bank",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-07-01\",\n  \"date_to\": \"2026-07-31\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"D-07-178\", \"date\": \"2026-07-15\", \"description\": \"CARD PROCESSOR PAYOUT ST-224332\", \"check_no\": \"\", \"amount\": \"2,373.00\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "sum_check",
+  "content": "{\n  \"bank_ids\": [\n    \"D-07-178\"\n  ],\n  \"gl_ids\": [\n    \"G-07-780\",\n    \"G-07-748\",\n    \"G-07-472\",\n    \"G-07-186\"\n  ]\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"bank_total\": \"2,373.00\", \"ledger_total\": \"2,373.00\", \"difference\": \"0.00\", \"ties\": true, \"unknown_ids\": []}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\"decision\":\"match\",\"bank_ids\":[\"D-07-178\"],\"gl_ids\":[\"G-07-780\",\"G-07-748\",\"G-07-472\",\"G-07-186\"],\"reason_code\":\"matched\",\"evidence\":[{\"txn_id\":\"D-07-178\",\"field\":\"amount\",\"value\":\"2,373.00\"},{\"txn_id\":\"G-07-780\",\"field\":\"amount\",\"value\":\"421.26\"},{\"txn_id\":\"G-07-748\",\"field\":\"amount\",\"value\":\"939.97\"},{\"txn_id\":\"G-07-472\",\"field\":\"amount\",\"value\":\"1,083.57\"},{\"txn_id\":\"G-07-186\",\"field\":\"memo\",\"value\":\"Processing fees - payout 07/15\"}],\"explanation\":\"The payout is the net of three card sales (421.26 + 939.97 + 1,083.57 = 2,444.80) less the 71.80 processing fee booked for the 07/15 payout. The total ties to 2,373.00 exactly.\",\"confidence\":\"medium\"}",
+  "thinking": ""
+ }
+]

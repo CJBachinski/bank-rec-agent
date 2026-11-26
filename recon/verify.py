@@ -65,7 +65,8 @@ def _evidence(conn, items) -> list[Violation]:
                 ok = False
             shown = stored
         else:
-            ok = bool(value.strip()) and value.strip().casefold() in stored.casefold()
+            quoted = value.strip().casefold()
+            ok = (quoted in stored.casefold()) if quoted else not stored.strip()   # empty is true only of an empty field
             shown = stored
         if not ok:
             out.append(Violation("evidence_mismatch",

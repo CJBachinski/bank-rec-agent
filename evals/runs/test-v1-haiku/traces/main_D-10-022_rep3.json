@@ -1,0 +1,75 @@
+[
+ {
+  "role": "system",
+  "content": "You reconcile bank activity to the cash ledger for a small company's accountant.\n\nYou are given one bank line that the automatic rules could not clear. Decide what it is:\n\n- match: it is the same money as one or more open ledger entries. Sometimes several bank lines together are the same money as one ledger entry.\n- no_match: the bank has it and the ledger does not, for example a bank fee, interest, a returned item, or a payment nobody booked.\n- needs_review: you cannot tell, or something is wrong that a person has to decide.\n\nUse the tools to look at open ledger entries and open bank lines. Use sum_check for any arithmetic. Amounts are signed from the cash account's side: money in is positive, money out is negative.\n\nPut the bank line you were given in bank_ids. In evidence, quote the field values you relied on exactly as they appear."
+ },
+ {
+  "role": "user",
+  "content": "{\n \"month\": \"2026-10\",\n \"accounts\": {\n  \"A\": \"1000 Operating Checking\",\n  \"D\": \"1010 Deposit Account\"\n },\n \"bank_line\": {\n  \"id\": \"D-10-022\",\n  \"account\": \"D\",\n  \"date\": \"2026-10-23\",\n  \"description\": \"MOBILE CHECK DEPOSIT 7826\",\n  \"amount\": \"3,679.33\",\n  \"check_no\": \"\"\n }\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 3679.33,\n  \"amount_max\": 3679.33,\n  \"date_from\": \"2026-10-01\",\n  \"date_to\": \"2026-10-31\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-10-01\",\n  \"date_to\": \"2026-10-31\",\n  \"text\": \"deposit\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"G-10-049\", \"date\": \"2026-10-07\", \"txn_type\": \"Deposit\", \"num\": \"\", \"name\": \"\", \"memo\": \"Deposit - 5 customer checks\", \"amount\": \"7,175.03\"}, {\"id\": \"G-10-069\", \"date\": \"2026-10-22\", \"txn_type\": \"Deposit\", \"num\": \"\", \"name\": \"\", \"memo\": \"Deposit - 5 customer checks\", \"amount\": \"7,273.07\"}, {\"id\": \"G-10-076\", \"date\": \"2026-10-31\", \"txn_type\": \"Deposit\", \"num\": \"\", \"name\": \"\", \"memo\": \"Deposit - customer checks\", \"amount\": \"5,523.89\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 3000,\n  \"amount_max\": 4500,\n  \"date_from\": \"2026-10-01\",\n  \"date_to\": \"2026-11-15\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_bank",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-10-01\",\n  \"date_to\": \"2026-10-31\",\n  \"text\": \"MOBILE\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"D-10-004\", \"date\": \"2026-10-07\", \"description\": \"MOBILE CHECK DEPOSIT 7983\", \"check_no\": \"\", \"amount\": \"2,944.65\"}, {\"id\": \"D-10-007\", \"date\": \"2026-10-08\", \"description\": \"MOBILE CHECK DEPOSIT 7633\", \"check_no\": \"\", \"amount\": \"1,372.88\"}, {\"id\": \"D-10-022\", \"date\": \"2026-10-23\", \"description\": \"MOBILE CHECK DEPOSIT 7826\", \"check_no\": \"\", \"amount\": \"3,679.33\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_bank",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-10-15\",\n  \"date_to\": \"2026-11-05\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"D-10-015\", \"date\": \"2026-10-15\", \"description\": \"OLD MILL CABINETRY PAYMENT 383241\", \"check_no\": \"\", \"amount\": \"5,600.00\"}, {\"id\": \"D-10-016\", \"date\": \"2026-10-16\", \"description\": \"ASHBY MACHINE WKS PAYMENT 978502\", \"check_no\": \"\", \"amount\": \"5,600.00\"}, {\"id\": \"D-10-019\", \"date\": \"2026-10-22\", \"description\": \"ATM CHECK DEPOSIT 5939\", \"check_no\": \"\", \"amount\": \"2,150.29\"}, {\"id\": \"D-10-021\", \"date\": \"2026-10-23\", \"description\": \"CARD PROCESSOR PAYOUT ST-659694\", \"check_no\": \"\", \"amount\": \"6,498.85\"}, {\"id\": \"D-10-022\", \"date\": \"2026-10-23\", \"description\": \"MOBILE CHECK DEPOSIT 7826\", \"check_no\": \"\", \"amount\": \"3,679.33\"}, {\"id\": \"D-10-023\", \"date\": \"2026-10-23\", \"description\": \"COUNTER DEPOSIT 9980\", \"check_no\": \"\", \"amount\": \"1,443.45\"}, {\"id\": \"D-10-025\", \"date\": \"2026-10-27\", \"description\": \"CARD PROCESSOR PAYOUT ST-801335\", \"check_no\": \"\", \"amount\": \"4,944.31\"}, {\"id\": \"D-10-026\", \"date\": \"2026-10-30\", \"description\": \"INTEREST PAID\", \"check_no\": \"\", \"amount\": \"21.07\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "sum_check",
+  "content": "{\n  \"bank_ids\": [\n    \"D-10-019\",\n    \"D-10-022\",\n    \"D-10-023\"\n  ],\n  \"gl_ids\": [\n    \"G-10-069\"\n  ]\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"bank_total\": \"7,273.07\", \"ledger_total\": \"7,273.07\", \"difference\": \"0.00\", \"ties\": true, \"unknown_ids\": []}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\"decision\":\"match\",\"bank_ids\":[\"D-10-022\",\"D-10-019\",\"D-10-023\"],\"gl_ids\":[\"G-10-069\"],\"reason_code\":\"matched\",\"evidence\":[{\"txn_id\":\"D-10-022\",\"field\":\"description\",\"value\":\"MOBILE CHECK DEPOSIT 7826\"},{\"txn_id\":\"D-10-022\",\"field\":\"amount\",\"value\":\"3,679.33\"},{\"txn_id\":\"D-10-019\",\"field\":\"description\",\"value\":\"ATM CHECK DEPOSIT 5939\"},{\"txn_id\":\"D-10-019\",\"field\":\"amount\",\"value\":\"2,150.29\"},{\"txn_id\":\"D-10-023\",\"field\":\"description\",\"value\":\"COUNTER DEPOSIT 9980\"},{\"txn_id\":\"D-10-023\",\"field\":\"amount\",\"value\":\"1,443.45\"},{\"txn_id\":\"G-10-069\",\"field\":\"memo\",\"value\":\"Deposit - 5 customer checks\"},{\"txn_id\":\"G-10-069\",\"field\":\"amount\",\"value\":\"7,273.07\"},{\"txn_id\":\"G-10-069\",\"field\":\"date\",\"value\":\"2026-10-22\"}],\"explanation\":\"No single open ledger entry is 3,679.33, but the ledger deposit G-10-069 of 7,273.07 equals three bank deposits together: D-10-019 (2,150.29), D-10-022 (3,679.33) and D-10-023 (1,443.45), which tie to the cent.\",\"confidence\":\"high\"}",
+  "thinking": ""
+ }
+]

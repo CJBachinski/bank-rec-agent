@@ -1,0 +1,55 @@
+[
+ {
+  "role": "system",
+  "content": "You reconcile bank activity to the cash ledger for a small company's accountant.\n\nYou are given one bank line that the automatic rules could not clear. Decide what it is:\n\n- match: it is the same money as one or more open ledger entries. Sometimes several bank lines together are the same money as one ledger entry.\n- no_match: the bank has it and the ledger does not, for example a bank fee, interest, a returned item, or a payment nobody booked.\n- needs_review: you cannot tell, or something is wrong that a person has to decide.\n\nUse the tools to look at open ledger entries and open bank lines. Use sum_check for any arithmetic. Amounts are signed from the cash account's side: money in is positive, money out is negative.\n\nPut the bank line you were given in bank_ids. In evidence, quote the field values you relied on exactly as they appear."
+ },
+ {
+  "role": "user",
+  "content": "{\n \"month\": \"2026-10\",\n \"accounts\": {\n  \"A\": \"1000 Operating Checking\",\n  \"D\": \"1010 Deposit Account\"\n },\n \"bank_line\": {\n  \"id\": \"D-10-007\",\n  \"account\": \"D\",\n  \"date\": \"2026-10-08\",\n  \"description\": \"MOBILE CHECK DEPOSIT 7633\",\n  \"amount\": \"1,372.88\",\n  \"check_no\": \"\"\n }\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 1372.88,\n  \"amount_max\": 1372.88,\n  \"date_from\": \"2026-09-01\",\n  \"date_to\": \"2026-10-31\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_bank",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 0,\n  \"amount_max\": 1372.88,\n  \"date_from\": \"2026-10-01\",\n  \"date_to\": \"2026-10-15\",\n  \"text\": \"DEPOSIT\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"D-10-007\", \"date\": \"2026-10-08\", \"description\": \"MOBILE CHECK DEPOSIT 7633\", \"check_no\": \"\", \"amount\": \"1,372.88\"}, {\"id\": \"D-10-010\", \"date\": \"2026-10-09\", \"description\": \"RETURNED DEPOSITED ITEM NSF 634780\", \"check_no\": \"\", \"amount\": \"-951.43\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 0,\n  \"amount_max\": 5000,\n  \"date_from\": \"2026-10-01\",\n  \"date_to\": \"2026-10-12\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"G-10-043\", \"date\": \"2026-10-05\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-3346\", \"name\": \"Walk-in customer\", \"memo\": \"Card sale\", \"amount\": \"2,109.81\"}, {\"id\": \"G-10-045\", \"date\": \"2026-10-06\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-3342\", \"name\": \"Kessler Sheet Metal\", \"memo\": \"Card sale\", \"amount\": \"915.85\"}, {\"id\": \"G-10-046\", \"date\": \"2026-10-06\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-3344\", \"name\": \"Greer Brothers Roofing\", \"memo\": \"Card sale\", \"amount\": \"846.67\"}, {\"id\": \"G-10-047\", \"date\": \"2026-10-06\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-3345\", \"name\": \"Walk-in customer\", \"memo\": \"Card sale\", \"amount\": \"2,470.54\"}, {\"id\": \"G-10-048\", \"date\": \"2026-10-07\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-3343\", \"name\": \"Corvid Automation\", \"memo\": \"Card sale\", \"amount\": \"1,939.68\"}, {\"id\": \"G-10-052\", \"date\": \"2026-10-09\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-3349\", \"name\": \"Walk-in customer\", \"memo\": \"Card sale\", \"amount\": \"990.94\"}, {\"id\": \"G-10-054\", \"date\": \"2026-10-10\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-3347\", \"name\": \"Walk-in customer\", \"memo\": \"Card sale\", \"amount\": \"682.90\"}, {\"id\": \"G-10-055\", \"date\": \"2026-10-10\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-3348\", \"name\": \"Linden Hill Builders\", \"memo\": \"Card sale\", \"amount\": \"839.13\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 0,\n  \"amount_max\": 1372.88,\n  \"date_from\": \"2026-10-12\",\n  \"date_to\": \"2026-10-31\",\n  \"text\": \"check\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\"decision\":\"no_match\",\"bank_ids\":[\"D-10-007\"],\"gl_ids\":[],\"reason_code\":\"unrecognized\",\"evidence\":[{\"txn_id\":\"D-10-007\",\"field\":\"description\",\"value\":\"MOBILE CHECK DEPOSIT 7633\"},{\"txn_id\":\"D-10-007\",\"field\":\"amount\",\"value\":\"1,372.88\"}],\"explanation\":\"No open ledger entry in account D equals 1,372.88. The early-October entries are card-sale receipts, and none of them is a check deposit. A check search for later October entries also found nothing. This looks like a deposit that nobody booked.\",\"confidence\":\"medium\"}",
+  "thinking": ""
+ }
+]

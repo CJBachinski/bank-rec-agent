@@ -1,0 +1,55 @@
+[
+ {
+  "role": "system",
+  "content": "You reconcile bank activity to the cash ledger for a small company's accountant.\n\nYou are given one bank line that the automatic rules could not clear. Decide what it is:\n\n- match: it is the same money as one or more open ledger entries. Sometimes several bank lines together are the same money as one ledger entry.\n- no_match: the bank has it and the ledger does not, for example a bank fee, interest, a returned item, or a payment nobody booked.\n- needs_review: you cannot tell, or something is wrong that a person has to decide.\n\nUse the tools to look at open ledger entries and open bank lines. Use sum_check for any arithmetic. Amounts are signed from the cash account's side: money in is positive, money out is negative.\n\nPut the bank line you were given in bank_ids. In evidence, quote the field values you relied on exactly as they appear."
+ },
+ {
+  "role": "user",
+  "content": "{\n \"month\": \"2026-10\",\n \"accounts\": {\n  \"A\": \"1000 Operating Checking\",\n  \"D\": \"1010 Deposit Account\"\n },\n \"bank_line\": {\n  \"id\": \"A-10-004\",\n  \"account\": \"A\",\n  \"date\": \"2026-10-27\",\n  \"description\": \"ACH DEBIT NTWK SVC BILLING 762577\",\n  \"amount\": \"-1,368.72\",\n  \"check_no\": \"\"\n }\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"A\",\n  \"amount_min\": 1368.72,\n  \"amount_max\": 1368.72,\n  \"date_from\": \"2026-10-01\",\n  \"date_to\": \"2026-10-31\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"G-10-035\", \"date\": \"2026-10-23\", \"txn_type\": \"Check\", \"num\": \"1077\", \"name\": \"Upland Hydraulics\", \"memo\": \"\", \"amount\": \"-1,368.72\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"A\",\n  \"amount_min\": 1368.72,\n  \"amount_max\": 1368.72,\n  \"date_from\": \"2026-09-01\",\n  \"date_to\": \"2026-11-30\",\n  \"text\": \"NTWK\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_bank",
+  "content": "{\n  \"account\": \"A\",\n  \"amount_min\": 1368.72,\n  \"amount_max\": 1368.72,\n  \"date_from\": \"2026-10-01\",\n  \"date_to\": \"2026-10-31\",\n  \"text\": \"NTWK\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"A-10-004\", \"date\": \"2026-10-27\", \"description\": \"ACH DEBIT NTWK SVC BILLING 762577\", \"check_no\": \"\", \"amount\": \"-1,368.72\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "sum_check",
+  "content": "{\n  \"bank_ids\": [\n    \"A-10-004\"\n  ],\n  \"gl_ids\": [\n    \"G-10-035\"\n  ]\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"bank_total\": \"-1,368.72\", \"ledger_total\": \"-1,368.72\", \"difference\": \"0.00\", \"ties\": true, \"unknown_ids\": []}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\"decision\":\"needs_review\",\"bank_ids\":[\"A-10-004\"],\"gl_ids\":[],\"reason_code\":\"insufficient_evidence\",\"evidence\":[{\"txn_id\":\"A-10-004\",\"field\":\"description\",\"value\":\"ACH DEBIT NTWK SVC BILLING 762577\"},{\"txn_id\":\"A-10-004\",\"field\":\"amount\",\"value\":\"-1,368.72\"},{\"txn_id\":\"G-10-035\",\"field\":\"name\",\"value\":\"Upland Hydraulics\"},{\"txn_id\":\"G-10-035\",\"field\":\"txn_type\",\"value\":\"Check\"},{\"txn_id\":\"G-10-035\",\"field\":\"amount\",\"value\":\"-1,368.72\"}],\"explanation\":\"The only open ledger entry with the same amount is check 1077 to Upland Hydraulics dated 2026-10-23, which is a check, not an ACH to a network service billing vendor, and no ledger entry names NTWK or SVC BILLING. The payee and payment type do not agree, so a person should decide whether this is an unrecorded vendor payment or an unrelated coincidence with the open check.\",\"confidence\":\"medium\"}",
+  "thinking": ""
+ }
+]

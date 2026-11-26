@@ -114,3 +114,15 @@ def test_no_match_on_a_real_bank_line_passes():
 
 def test_unknown_decision_is_malformed():
     assert codes(ledger(), proposal(decision="probably")) == ["malformed"]
+
+
+def test_quoting_an_empty_field_as_empty_is_an_accurate_citation():
+    """'This bank line has no check number' is a true statement about the record."""
+    p = proposal(decision="no_match", bank_ids=["B2"], gl_ids=[],
+                 evidence=[{"txn_id": "B2", "field": "check_no", "value": ""}])
+    assert codes(ledger(), p) == []
+
+
+def test_quoting_nothing_for_a_field_that_has_a_value_is_still_a_mismatch():
+    p = proposal(evidence=[{"txn_id": "G2", "field": "name", "value": ""}])
+    assert codes(ledger(), p) == ["evidence_mismatch"]

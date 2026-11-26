@@ -1,0 +1,65 @@
+[
+ {
+  "role": "system",
+  "content": "You reconcile bank activity to the cash ledger for a small company's accountant.\n\nYou are given one bank line that the automatic rules could not clear. Decide what it is:\n\n- match: it is the same money as one or more open ledger entries. Sometimes several bank lines together are the same money as one ledger entry.\n- no_match: the bank has it and the ledger does not, for example a bank fee, interest, a returned item, or a payment nobody booked.\n- needs_review: you cannot tell, or something is wrong that a person has to decide.\n\nUse the tools to look at open ledger entries and open bank lines. Use sum_check for any arithmetic. Amounts are signed from the cash account's side: money in is positive, money out is negative.\n\nPut the bank line you were given in bank_ids. In evidence, quote the field values you relied on exactly as they appear."
+ },
+ {
+  "role": "user",
+  "content": "{\n \"month\": \"2026-07\",\n \"accounts\": {\n  \"A\": \"1000 Operating Checking\",\n  \"D\": \"1010 Deposit Account\"\n },\n \"bank_line\": {\n  \"id\": \"A-07-120\",\n  \"account\": \"A\",\n  \"date\": \"2026-07-08\",\n  \"description\": \"ACH DEBIT SUMMIT PACKAGING 877574\",\n  \"amount\": \"-1,375.99\",\n  \"check_no\": \"\"\n }\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"A\",\n  \"amount_min\": 1375.99,\n  \"amount_max\": 1375.99,\n  \"date_from\": \"2026-06-01\",\n  \"date_to\": \"2026-08-31\",\n  \"text\": \"Summit\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"A\",\n  \"amount_min\": 1375.99,\n  \"amount_max\": 1375.99,\n  \"date_from\": \"2026-06-01\",\n  \"date_to\": \"2026-08-31\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"G-07-097\", \"date\": \"2026-08-07\", \"txn_type\": \"Bill Payment\", \"num\": \"\", \"name\": \"Corbin & Vale Attorneys\", \"memo\": \"Inv 24271\", \"amount\": \"-1,375.99\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_bank",
+  "content": "{\n  \"account\": \"A\",\n  \"amount_min\": 1375.99,\n  \"amount_max\": 1375.99,\n  \"date_from\": \"2026-06-01\",\n  \"date_to\": \"2026-08-31\",\n  \"text\": \"SUMMIT\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"A-07-120\", \"date\": \"2026-07-08\", \"description\": \"ACH DEBIT SUMMIT PACKAGING 877574\", \"check_no\": \"\", \"amount\": \"-1,375.99\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"A\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-01-01\",\n  \"date_to\": \"2026-12-31\",\n  \"text\": \"Packaging\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"G-07-337\", \"date\": \"2026-07-03\", \"txn_type\": \"Bill Payment\", \"num\": \"\", \"name\": \"Summit Packaging Corp\", \"memo\": \"Inv 33299\", \"amount\": \"-3,898.22\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_bank",
+  "content": "{\n  \"account\": \"A\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-06-01\",\n  \"date_to\": \"2026-08-31\",\n  \"text\": \"SUMMIT\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"A-07-120\", \"date\": \"2026-07-08\", \"description\": \"ACH DEBIT SUMMIT PACKAGING 877574\", \"check_no\": \"\", \"amount\": \"-1,375.99\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\"decision\":\"needs_review\",\"bank_ids\":[\"A-07-120\"],\"gl_ids\":[],\"reason_code\":\"amount_mismatch\",\"evidence\":[{\"txn_id\":\"A-07-120\",\"field\":\"description\",\"value\":\"ACH DEBIT SUMMIT PACKAGING 877574\"},{\"txn_id\":\"A-07-120\",\"field\":\"amount\",\"value\":\"-1,375.99\"},{\"txn_id\":\"G-07-337\",\"field\":\"name\",\"value\":\"Summit Packaging Corp\"},{\"txn_id\":\"G-07-337\",\"field\":\"amount\",\"value\":\"-3,898.22\"},{\"txn_id\":\"G-07-337\",\"field\":\"memo\",\"value\":\"Inv 33299\"},{\"txn_id\":\"G-07-097\",\"field\":\"name\",\"value\":\"Corbin & Vale Attorneys\"},{\"txn_id\":\"G-07-097\",\"field\":\"amount\",\"value\":\"-1,375.99\"}],\"explanation\":\"The bank shows a $1,375.99 ACH debit to Summit Packaging, but the only open Summit Packaging ledger entry (G-07-337, Inv 33299) is for $3,898.22, and there is no other Summit bank line to tie to it. The only open ledger entry for exactly $1,375.99 is a Corbin & Vale Attorneys bill payment dated 2026-08-07, which is a different payee and a later date, so a person needs to decide whether this is an unrecorded Summit invoice or a misapplied payment.\",\"confidence\":\"medium\"}",
+  "thinking": ""
+ }
+]

@@ -6,3 +6,8 @@ __pycache__/
 *.db
 out/
 .DS_Store
+
+# transcripts are committed for the held-out runs only; development and pilot ones stay local
+evals/runs/dev-*/traces/
+evals/runs/pilot-*/traces/
+evals/runs/harness-*/

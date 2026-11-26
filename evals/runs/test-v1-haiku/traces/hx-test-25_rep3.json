@@ -1,0 +1,75 @@
+[
+ {
+  "role": "system",
+  "content": "You reconcile bank activity to the cash ledger for a small company's accountant.\n\nYou are given one bank line that the automatic rules could not clear. Decide what it is:\n\n- match: it is the same money as one or more open ledger entries. Sometimes several bank lines together are the same money as one ledger entry.\n- no_match: the bank has it and the ledger does not, for example a bank fee, interest, a returned item, or a payment nobody booked.\n- needs_review: you cannot tell, or something is wrong that a person has to decide.\n\nUse the tools to look at open ledger entries and open bank lines. Use sum_check for any arithmetic. Amounts are signed from the cash account's side: money in is positive, money out is negative.\n\nPut the bank line you were given in bank_ids. In evidence, quote the field values you relied on exactly as they appear."
+ },
+ {
+  "role": "user",
+  "content": "{\n \"month\": \"2026-07\",\n \"accounts\": {\n  \"A\": \"1000 Operating Checking\",\n  \"D\": \"1010 Deposit Account\"\n },\n \"bank_line\": {\n  \"id\": \"D-07-175\",\n  \"account\": \"D\",\n  \"date\": \"2026-07-16\",\n  \"description\": \"CARD PROCESSOR PAYOUT ST-885688\",\n  \"amount\": \"4,073.48\",\n  \"check_no\": \"\"\n }\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 4073.48,\n  \"amount_max\": 4073.48,\n  \"date_from\": \"2026-06-01\",\n  \"date_to\": \"2026-08-31\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-07-01\",\n  \"date_to\": \"2026-07-31\",\n  \"text\": \"ST-885688\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_bank",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-07-01\",\n  \"date_to\": \"2026-07-31\",\n  \"text\": \"PROCESSOR\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"D-07-175\", \"date\": \"2026-07-16\", \"description\": \"CARD PROCESSOR PAYOUT ST-885688\", \"check_no\": \"\", \"amount\": \"4,073.48\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 3000,\n  \"amount_max\": 5000,\n  \"date_from\": \"2026-06-15\",\n  \"date_to\": \"2026-08-15\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-07-01\",\n  \"date_to\": \"2026-07-31\",\n  \"text\": \"card\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"G-07-427\", \"date\": \"2026-07-09\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-9181\", \"name\": \"Rowan & Pike Contractors\", \"memo\": \"Card sale\", \"amount\": \"716.87\"}, {\"id\": \"G-07-470\", \"date\": \"2026-07-10\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-0652\", \"name\": \"Corvid Automation\", \"memo\": \"Card sale\", \"amount\": \"1,351.37\"}, {\"id\": \"G-07-510\", \"date\": \"2026-07-13\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-3659\", \"name\": \"Walk-in customer\", \"memo\": \"Card sale\", \"amount\": \"1,364.29\"}, {\"id\": \"G-07-100\", \"date\": \"2026-07-14\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-1263\", \"name\": \"Walk-in customer\", \"memo\": \"Card sale\", \"amount\": \"1,853.32\"}, {\"id\": \"G-07-569\", \"date\": \"2026-07-14\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-0121\", \"name\": \"Walk-in customer\", \"memo\": \"Card sale\", \"amount\": \"978.46\"}, {\"id\": \"G-07-552\", \"date\": \"2026-07-16\", \"txn_type\": \"Expense\", \"num\": \"\", \"name\": \"Card processor\", \"memo\": \"Processing fees - payout 07/16\", \"amount\": \"-122.59\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "sum_check",
+  "content": "{\n  \"bank_ids\": [\n    \"D-07-175\"\n  ],\n  \"gl_ids\": [\n    \"G-07-510\",\n    \"G-07-100\",\n    \"G-07-569\",\n    \"G-07-552\"\n  ]\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"bank_total\": \"4,073.48\", \"ledger_total\": \"4,073.48\", \"difference\": \"0.00\", \"ties\": true, \"unknown_ids\": []}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\"decision\":\"match\",\"bank_ids\":[\"D-07-175\"],\"gl_ids\":[\"G-07-510\",\"G-07-100\",\"G-07-569\",\"G-07-552\"],\"reason_code\":\"matched\",\"evidence\":[{\"txn_id\":\"D-07-175\",\"field\":\"description\",\"value\":\"CARD PROCESSOR PAYOUT ST-885688\"},{\"txn_id\":\"D-07-175\",\"field\":\"amount\",\"value\":\"4,073.48\"},{\"txn_id\":\"G-07-510\",\"field\":\"memo\",\"value\":\"Card sale\"},{\"txn_id\":\"G-07-510\",\"field\":\"amount\",\"value\":\"1,364.29\"},{\"txn_id\":\"G-07-100\",\"field\":\"memo\",\"value\":\"Card sale\"},{\"txn_id\":\"G-07-100\",\"field\":\"amount\",\"value\":\"1,853.32\"},{\"txn_id\":\"G-07-569\",\"field\":\"memo\",\"value\":\"Card sale\"},{\"txn_id\":\"G-07-569\",\"field\":\"amount\",\"value\":\"978.46\"},{\"txn_id\":\"G-07-552\",\"field\":\"name\",\"value\":\"Card processor\"},{\"txn_id\":\"G-07-552\",\"field\":\"memo\",\"value\":\"Processing fees - payout 07/16\"},{\"txn_id\":\"G-07-552\",\"field\":\"amount\",\"value\":\"-122.59\"}],\"explanation\":\"The processor payout of 4,073.48 equals three July card sales (1,364.29 + 1,853.32 + 978.46 = 4,196.07) less the 07/16 processing fee of 122.59 booked as G-07-552; sum_check confirms the four ledger entries tie to the bank line to the cent.\",\"confidence\":\"high\"}",
+  "thinking": ""
+ }
+]

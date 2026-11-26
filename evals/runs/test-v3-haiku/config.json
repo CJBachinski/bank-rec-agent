@@ -1,0 +1,8 @@
+{
+  "name": "test-v3-haiku",
+  "split": "test",
+  "model": "claude-haiku-5-5",
+  "prompt": "v3",
+  "effort": "medium",
+  "reps": 3
+}

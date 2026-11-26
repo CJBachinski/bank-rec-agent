@@ -1,0 +1,45 @@
+[
+ {
+  "role": "system",
+  "content": "You reconcile bank activity to the cash ledger for a small company's accountant.\n\nYou are given one bank line that the automatic rules could not clear. Decide what it is:\n\n- match: it is the same money as one or more open ledger entries. Sometimes several bank lines together are the same money as one ledger entry.\n- no_match: the bank has it and the ledger does not, for example a bank fee, interest, a returned item, or a payment nobody booked.\n- needs_review: you cannot tell, or something is wrong that a person has to decide.\n\nUse the tools to look at open ledger entries and open bank lines. Use sum_check for any arithmetic. Amounts are signed from the cash account's side: money in is positive, money out is negative.\n\nPut the bank line you were given in bank_ids. In evidence, quote the field values you relied on exactly as they appear."
+ },
+ {
+  "role": "user",
+  "content": "{\n \"month\": \"2026-10\",\n \"accounts\": {\n  \"A\": \"1000 Operating Checking\",\n  \"D\": \"1010 Deposit Account\"\n },\n \"bank_line\": {\n  \"id\": \"D-10-025\",\n  \"account\": \"D\",\n  \"date\": \"2026-10-27\",\n  \"description\": \"CARD PROCESSOR PAYOUT ST-801335\",\n  \"amount\": \"4,944.31\",\n  \"check_no\": \"\"\n }\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-10-15\",\n  \"date_to\": \"2026-11-05\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"G-10-060\", \"date\": \"2026-10-15\", \"txn_type\": \"Payment\", \"num\": \"\", \"name\": \"Old Mill Cabinetry\", \"memo\": \"Inv 4735\", \"amount\": \"5,600.00\"}, {\"id\": \"G-10-062\", \"date\": \"2026-10-19\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-3353\", \"name\": \"Mercer County Schools\", \"memo\": \"Card sale\", \"amount\": \"1,541.73\"}, {\"id\": \"G-10-063\", \"date\": \"2026-10-19\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-3354\", \"name\": \"Paxton Electric, LLC\", \"memo\": \"Card sale\", \"amount\": \"1,207.04\"}, {\"id\": \"G-10-065\", \"date\": \"2026-10-20\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-3352\", \"name\": \"Paxton Electric, LLC\", \"memo\": \"Card sale\", \"amount\": \"1,322.40\"}, {\"id\": \"G-10-066\", \"date\": \"2026-10-21\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-3350\", \"name\": \"Ashby Machine Works\", \"memo\": \"Card sale\", \"amount\": \"1,213.49\"}, {\"id\": \"G-10-067\", \"date\": \"2026-10-21\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-3351\", \"name\": \"Walk-in customer\", \"memo\": \"Card sale\", \"amount\": \"1,409.83\"}, {\"id\": \"G-10-069\", \"date\": \"2026-10-22\", \"txn_type\": \"Deposit\", \"num\": \"\", \"name\": \"\", \"memo\": \"Deposit - 5 customer checks\", \"amount\": \"7,273.07\"}, {\"id\": \"G-10-071\", \"date\": \"2026-10-23\", \"txn_type\": \"Expense\", \"num\": \"\", \"name\": \"Card processor\", \"memo\": \"Processing fees - payout 10/23\", \"amount\": \"-195.64\"}, {\"id\": \"G-10-072\", \"date\": \"2026-10-24\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-3355\", \"name\": \"Walk-in customer\", \"memo\": \"Card sale\", \"amount\": \"1,202.12\"}, {\"id\": \"G-10-073\", \"date\": \"2026-10-24\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-3357\", \"name\": \"Walk-in customer\", \"memo\": \"Card sale\", \"amount\": \"1,784.89\"}, {\"id\": \"G-10-074\", \"date\": \"2026-10-25\", \"txn_type\": \"Sales Receipt\", \"num\": \"SR-3356\", \"name\": \"Walk-in customer\", \"memo\": \"Card sale\", \"amount\": \"2,105.89\"}, {\"id\": \"G-10-075\", \"date\": \"2026-10-27\", \"txn_type\": \"Expense\", \"num\": \"\", \"name\": \"Card processor\", \"memo\": \"Processing fees - payout 10/27\", \"amount\": \"-148.59\"}, {\"id\": \"G-10-076\", \"date\": \"2026-10-31\", \"txn_type\": \"Deposit\", \"num\": \"\", \"name\": \"\", \"memo\": \"Deposit - customer checks\", \"amount\": \"5,523.89\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_bank",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-10-15\",\n  \"date_to\": \"2026-11-05\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"D-10-015\", \"date\": \"2026-10-15\", \"description\": \"OLD MILL CABINETRY PAYMENT 383241\", \"check_no\": \"\", \"amount\": \"5,600.00\"}, {\"id\": \"D-10-016\", \"date\": \"2026-10-16\", \"description\": \"ASHBY MACHINE WKS PAYMENT 978502\", \"check_no\": \"\", \"amount\": \"5,600.00\"}, {\"id\": \"D-10-019\", \"date\": \"2026-10-22\", \"description\": \"ATM CHECK DEPOSIT 5939\", \"check_no\": \"\", \"amount\": \"2,150.29\"}, {\"id\": \"D-10-021\", \"date\": \"2026-10-23\", \"description\": \"CARD PROCESSOR PAYOUT ST-659694\", \"check_no\": \"\", \"amount\": \"6,498.85\"}, {\"id\": \"D-10-022\", \"date\": \"2026-10-23\", \"description\": \"MOBILE CHECK DEPOSIT 7826\", \"check_no\": \"\", \"amount\": \"3,679.33\"}, {\"id\": \"D-10-023\", \"date\": \"2026-10-23\", \"description\": \"COUNTER DEPOSIT 9980\", \"check_no\": \"\", \"amount\": \"1,443.45\"}, {\"id\": \"D-10-025\", \"date\": \"2026-10-27\", \"description\": \"CARD PROCESSOR PAYOUT ST-801335\", \"check_no\": \"\", \"amount\": \"4,944.31\"}, {\"id\": \"D-10-026\", \"date\": \"2026-10-30\", \"description\": \"INTEREST PAID\", \"check_no\": \"\", \"amount\": \"21.07\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "sum_check",
+  "content": "{\n  \"bank_ids\": [\n    \"D-10-025\"\n  ],\n  \"gl_ids\": [\n    \"G-10-072\",\n    \"G-10-073\",\n    \"G-10-074\",\n    \"G-10-075\"\n  ]\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"bank_total\": \"4,944.31\", \"ledger_total\": \"4,944.31\", \"difference\": \"0.00\", \"ties\": true, \"unknown_ids\": []}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\"decision\":\"match\",\"bank_ids\":[\"D-10-025\"],\"gl_ids\":[\"G-10-072\",\"G-10-073\",\"G-10-074\",\"G-10-075\"],\"reason_code\":\"matched\",\"evidence\":[{\"txn_id\":\"D-10-025\",\"field\":\"amount\",\"value\":\"4,944.31\"},{\"txn_id\":\"G-10-072\",\"field\":\"amount\",\"value\":\"1,202.12\"},{\"txn_id\":\"G-10-073\",\"field\":\"amount\",\"value\":\"1,784.89\"},{\"txn_id\":\"G-10-074\",\"field\":\"amount\",\"value\":\"2,105.89\"},{\"txn_id\":\"G-10-075\",\"field\":\"memo\",\"value\":\"Processing fees - payout 10/27\"}],\"explanation\":\"The payout is the net of three card sales (SR-3355, SR-3357, SR-3356, gross 5,092.90) less the 148.59 processing fee booked for the 10/27 payout. sum_check ties to the cent at 4,944.31.\",\"confidence\":\"high\"}",
+  "thinking": ""
+ }
+]

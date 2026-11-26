@@ -1,0 +1,45 @@
+[
+ {
+  "role": "system",
+  "content": "You reconcile bank activity to the cash ledger for a small company's accountant.\n\nYou are given one bank line that the automatic rules could not clear. Decide what it is:\n\n- match: it is the same money as one or more open ledger entries. Sometimes several bank lines together are the same money as one ledger entry.\n- no_match: the bank has it and the ledger does not, for example a bank fee, interest, a returned item, or a payment nobody booked.\n- needs_review: you cannot tell, or something is wrong that a person has to decide.\n\nUse the tools to look at open ledger entries and open bank lines. Use sum_check for any arithmetic. Amounts are signed from the cash account's side: money in is positive, money out is negative.\n\nPut the bank line you were given in bank_ids. In evidence, quote the field values you relied on exactly as they appear, and name the field each one came from. A bank line has these fields: amount, date, description, check_no. A ledger entry has these: amount, date, name, memo, num, txn_type. Cite only a field the record has. How a bank item was paid (ACH, card, check) is part of its description, so quote it from there.\n\nHow this company's records behave:\n\n- Card purchases post under the merchant's trade name, often with a processor prefix such as SQ *, TST* or PAYPAL *, and up to about a week after the receipt date the bookkeeper used. The ledger carries the vendor's legal name. For a card purchase, a name that looks different is normal and is not by itself a reason to hold the item. This applies to card purchases only. An ACH or check payment to one named company is not the same money as a ledger entry for a differently named company, even when the amount is identical.\n- The bank sometimes shows one ledger deposit as several lines, one per trip to the counter or ATM. If no open ledger entry has this line's amount, look at the other open bank deposits in the same account within a few days and check whether together they add up to one ledger entry. If they do, propose the whole group, with every one of those bank lines in bank_ids.\n- Bills are occasionally entered twice. If two open ledger entries are identical (same payee, amount, date and invoice) and the bank paid once, match the bank line to one of them and say in the explanation that the other looks like a duplicate to void. Do not hold the bank line for that."
+ },
+ {
+  "role": "user",
+  "content": "{\n \"month\": \"2026-10\",\n \"accounts\": {\n  \"A\": \"1000 Operating Checking\",\n  \"D\": \"1010 Deposit Account\"\n },\n \"bank_line\": {\n  \"id\": \"D-10-015\",\n  \"account\": \"D\",\n  \"date\": \"2026-10-15\",\n  \"description\": \"OLD MILL CABINETRY PAYMENT 383241\",\n  \"amount\": \"5,600.00\",\n  \"check_no\": \"\"\n }\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 5600,\n  \"amount_max\": 5600,\n  \"date_from\": \"2026-09-01\",\n  \"date_to\": \"2026-11-15\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"G-10-058\", \"date\": \"2026-10-14\", \"txn_type\": \"Payment\", \"num\": \"\", \"name\": \"Ashby Machine Works\", \"memo\": \"Inv 5174\", \"amount\": \"5,600.00\"}, {\"id\": \"G-10-060\", \"date\": \"2026-10-15\", \"txn_type\": \"Payment\", \"num\": \"\", \"name\": \"Old Mill Cabinetry\", \"memo\": \"Inv 4735\", \"amount\": \"5,600.00\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_ledger",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-09-01\",\n  \"date_to\": \"2026-11-15\",\n  \"text\": \"Old Mill\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"G-10-060\", \"date\": \"2026-10-15\", \"txn_type\": \"Payment\", \"num\": \"\", \"name\": \"Old Mill Cabinetry\", \"memo\": \"Inv 4735\", \"amount\": \"5,600.00\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "tool_call",
+  "name": "search_bank",
+  "content": "{\n  \"account\": \"D\",\n  \"amount_min\": 0,\n  \"amount_max\": 100000,\n  \"date_from\": \"2026-10-01\",\n  \"date_to\": \"2026-10-31\",\n  \"text\": \"\"\n}",
+  "thinking": ""
+ },
+ {
+  "role": "tool_result",
+  "content": "{\"rows\": [{\"id\": \"D-10-004\", \"date\": \"2026-10-07\", \"description\": \"MOBILE CHECK DEPOSIT 7983\", \"check_no\": \"\", \"amount\": \"2,944.65\"}, {\"id\": \"D-10-007\", \"date\": \"2026-10-08\", \"description\": \"MOBILE CHECK DEPOSIT 7633\", \"check_no\": \"\", \"amount\": \"1,372.88\"}, {\"id\": \"D-10-008\", \"date\": \"2026-10-08\", \"description\": \"COUNTER DEPOSIT 5860\", \"check_no\": \"\", \"amount\": \"2,857.50\"}, {\"id\": \"D-10-009\", \"date\": \"2026-10-09\", \"description\": \"CARD PROCESSOR PAYOUT ST-298334\", \"check_no\": \"\", \"amount\": \"8,040.86\"}, {\"id\": \"D-10-010\", \"date\": \"2026-10-09\", \"description\": \"RETURNED DEPOSITED ITEM NSF 634780\", \"check_no\": \"\", \"amount\": \"-951.43\"}, {\"id\": \"D-10-012\", \"date\": \"2026-10-14\", \"description\": \"CARD PROCESSOR PAYOUT ST-255526\", \"check_no\": \"\", \"amount\": \"2,439.20\"}, {\"id\": \"D-10-015\", \"date\": \"2026-10-15\", \"description\": \"OLD MILL CABINETRY PAYMENT 383241\", \"check_no\": \"\", \"amount\": \"5,600.00\"}, {\"id\": \"D-10-016\", \"date\": \"2026-10-16\", \"description\": \"ASHBY MACHINE WKS PAYMENT 978502\", \"check_no\": \"\", \"amount\": \"5,600.00\"}, {\"id\": \"D-10-019\", \"date\": \"2026-10-22\", \"description\": \"ATM CHECK DEPOSIT 5939\", \"check_no\": \"\", \"amount\": \"2,150.29\"}, {\"id\": \"D-10-021\", \"date\": \"2026-10-23\", \"description\": \"CARD PROCESSOR PAYOUT ST-659694\", \"check_no\": \"\", \"amount\": \"6,498.85\"}, {\"id\": \"D-10-022\", \"date\": \"2026-10-23\", \"description\": \"MOBILE CHECK DEPOSIT 7826\", \"check_no\": \"\", \"amount\": \"3,679.33\"}, {\"id\": \"D-10-023\", \"date\": \"2026-10-23\", \"description\": \"COUNTER DEPOSIT 9980\", \"check_no\": \"\", \"amount\": \"1,443.45\"}, {\"id\": \"D-10-025\", \"date\": \"2026-10-27\", \"description\": \"CARD PROCESSOR PAYOUT ST-801335\", \"check_no\": \"\", \"amount\": \"4,944.31\"}, {\"id\": \"D-10-026\", \"date\": \"2026-10-30\", \"description\": \"INTEREST PAID\", \"check_no\": \"\", \"amount\": \"21.07\"}], \"more_rows_not_shown\": false}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\"decision\":\"match\",\"bank_ids\":[\"D-10-015\"],\"gl_ids\":[\"G-10-060\"],\"reason_code\":\"matched\",\"evidence\":[{\"txn_id\":\"D-10-015\",\"field\":\"description\",\"value\":\"OLD MILL CABINETRY PAYMENT 383241\"},{\"txn_id\":\"D-10-015\",\"field\":\"amount\",\"value\":\"5,600.00\"},{\"txn_id\":\"G-10-060\",\"field\":\"name\",\"value\":\"Old Mill Cabinetry\"},{\"txn_id\":\"G-10-060\",\"field\":\"amount\",\"value\":\"5,600.00\"},{\"txn_id\":\"G-10-060\",\"field\":\"date\",\"value\":\"2026-10-15\"}],\"explanation\":\"The bank line and ledger entry G-10-060 have the same payer name, the same amount of 5,600.00 and the same date, 2026-10-15. The other 5,600.00 ledger entry, G-10-058, is for Ashby Machine Works and belongs to bank line D-10-016.\",\"confidence\":\"high\"}",
+  "thinking": ""
+ }
+]
