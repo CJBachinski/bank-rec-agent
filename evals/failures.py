@@ -30,7 +30,7 @@ def failures(run_dir: Path, policy: str = pipeline.DEFAULT_POLICY, include_ok: b
             kind = d["verdict"]
         else:
             flags = [f for f in ("forced_match", "invented_id", "invented_value", "ungrounded_figure",
-                                 "escaped", "over_abstained") if d.get(f)]
+                                 "wrong_field", "escaped", "over_abstained") if d.get(f)]
             bad = bool(flags) or not d["correct"]
             kind = "+".join(flags) or ("wrong" if not d["correct"] else "ok")
         if bad or include_ok:

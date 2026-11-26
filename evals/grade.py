@@ -7,6 +7,11 @@ Each property is scored on its own, because they fail for different reasons:
   forced_match       a negative case was called a match
   invented_id        the proposal names or cites a transaction that does not exist
   invented_value     a quoted field value differs from what is stored
+  wrong_field        a citation names a field that record does not have (a bank
+                     line has no txn_type, say). The quoted text may be real; it
+                     cannot be checked as cited. Counted beside the others, not
+                     among them: it is a broken citation, not invented content.
+  citation_failed    any citation the verifier rejected, for whatever reason
   ungrounded_figure  the explanation states a dollar figure that is neither stored
                      nor a sum or difference of stored amounts
   hallucinated       any of the four above
@@ -61,6 +66,8 @@ def grade_case(case: dict, proposal: dict, policy: str = pipeline.DEFAULT_POLICY
         "forced_match": int(negative and decision == "match"),
         "invented_id": int("unknown_id" in codes),
         "invented_value": int("evidence_mismatch" in codes),
+        "wrong_field": int("unknown_field" in codes),
+        "citation_failed": int(bool({"unknown_id", "evidence_mismatch", "unknown_field"} & codes)),
         "ungrounded_figure": int(any(f not in derivable(case) for f in figures(proposal.get("explanation", "")))),
     }
     out["hallucinated"] = int(any(out[f] for f in FLAGS))

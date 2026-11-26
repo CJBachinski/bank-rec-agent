@@ -1,0 +1,45 @@
+{
+ "policy": "medium_up",
+ "chosen_on": [
+  "dev-v3-sonnet",
+  "dev-v3-haiku"
+ ],
+ "table": [
+  {
+   "policy": "high_only",
+   "clears_at": [
+    "high"
+   ],
+   "false_clears": 0,
+   "escaped_forced_matches": 0,
+   "harm": 0,
+   "correct": 246,
+   "lines": 260
+  },
+  {
+   "policy": "medium_up",
+   "clears_at": [
+    "high",
+    "medium"
+   ],
+   "false_clears": 0,
+   "escaped_forced_matches": 0,
+   "harm": 0,
+   "correct": 260,
+   "lines": 260
+  },
+  {
+   "policy": "all_verified",
+   "clears_at": [
+    "high",
+    "low",
+    "medium"
+   ],
+   "false_clears": 0,
+   "escaped_forced_matches": 0,
+   "harm": 0,
+   "correct": 260,
+   "lines": 260
+  }
+ ]
+}

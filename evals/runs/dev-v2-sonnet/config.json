@@ -1,0 +1,8 @@
+{
+  "name": "dev-v2-sonnet",
+  "split": "dev",
+  "model": "claude-sonnet-5-5",
+  "prompt": "v2",
+  "effort": "medium",
+  "reps": 2
+}

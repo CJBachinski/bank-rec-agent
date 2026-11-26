@@ -74,7 +74,13 @@ def test_evidence_about_a_transaction_that_does_not_exist_is_caught():
 
 def test_evidence_naming_a_field_that_does_not_exist_is_caught():
     p = proposal(evidence=[{"txn_id": "G2", "field": "invoice_total", "value": "200.00"}])
-    assert codes(ledger(), p) == ["evidence_mismatch"]
+    assert codes(ledger(), p) == ["unknown_field"]
+
+
+def test_a_ledger_only_field_cited_on_a_bank_line_is_a_wrong_field_not_a_wrong_value():
+    """The text may be real; the record simply has no field of that name to check it against."""
+    p = proposal(evidence=[{"txn_id": "B1", "field": "txn_type", "value": "CARD PROCESSOR PAYOUT"}])
+    assert codes(ledger(), p) == ["unknown_field"]
 
 
 def test_bank_and_ledger_in_different_accounts_cannot_be_matched():

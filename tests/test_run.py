@@ -172,3 +172,30 @@ def test_wilson_interval_brackets_the_rate_and_narrows_with_more_data():
     lo2, hi2 = summarize.wilson(90, 100)
     assert (hi2 - lo2) < (hi - lo)
     assert summarize.wilson(0, 0) == (0.0, 0.0)
+
+
+# -- choosing the clearing policy ------------------------------------------------
+
+def test_policy_choice_prefers_no_harm_then_most_correct_then_strictest():
+    from evals import choose_policy
+
+    def row(policy, harm, correct):
+        return {"policy": policy, "harm": harm, "correct": correct}
+
+    # looser policies cause harm: take the strict one even though it clears less
+    assert choose_policy.choose([row("high_only", 0, 50), row("medium_up", 2, 58),
+                                 row("all_verified", 2, 58)]) == "high_only"
+    # nobody causes harm: take the one that gets more right
+    assert choose_policy.choose([row("high_only", 0, 50), row("medium_up", 0, 58),
+                                 row("all_verified", 0, 58)]) == "medium_up"
+    # nothing separates them: take the strictest
+    assert choose_policy.choose([row("high_only", 0, 58), row("medium_up", 0, 58),
+                                 row("all_verified", 0, 58)]) == "high_only"
+
+
+def test_policy_table_counts_escapes_from_a_careless_model_as_harm(tmp_path):
+    from evals import choose_policy
+
+    rows = {r["policy"]: r for r in choose_policy.table([go(tmp_path, fakes.Greedy())])}
+    assert rows["all_verified"]["escaped_forced_matches"] >= 6
+    assert rows["all_verified"]["harm"] == rows["all_verified"]["false_clears"] + rows["all_verified"]["escaped_forced_matches"]

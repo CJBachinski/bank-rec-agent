@@ -49,7 +49,7 @@ def _evidence(conn, items) -> list[Violation]:
             continue
         fields = BANK_FIELDS if "posted_date" in row.keys() else GL_FIELDS
         if name not in fields:
-            out.append(Violation("evidence_mismatch", f"{txn_id} has no field called {name!r}"))
+            out.append(Violation("unknown_field", f"{txn_id} has no field called {name!r}"))
             continue
         stored = row[fields[name]]
         if name == "amount":

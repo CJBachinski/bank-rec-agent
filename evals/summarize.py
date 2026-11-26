@@ -26,7 +26,8 @@ from evals.run import ROOT, _read, answer_key
 from recon import pipeline
 
 HX_FIELDS = ("correct", "hallucinated", "forced_match", "invented_id", "invented_value",
-             "ungrounded_figure", "escaped")
+             "ungrounded_figure", "wrong_field", "citation_failed", "escaped")
+CITATION_CODES = {"unknown_id", "evidence_mismatch", "unknown_field"}
 
 
 def wilson(k: int, n: int, z: float = 1.96) -> tuple[float, float]:
@@ -78,8 +79,7 @@ def summarize(run_dir: Path, policy: str = pipeline.DEFAULT_POLICY, write: bool 
             verdict = {d["bank_id"]: d for d in s["detail"]}
             agent_correct.append((sum(verdict[b]["verdict"] == "correct" for b in proposals), len(proposals)))
             answered = [a for a in audit if a["outcome"] != "no_answer"]
-            citation.append((sum(bool({"unknown_id", "evidence_mismatch"} & set(a["held_by"]))
-                                 for a in answered), len(answered)))
+            citation.append((sum(bool(CITATION_CODES & set(a["held_by"])) for a in answered), len(answered)))
             rep_summary["main"] = {v: s[v] for v in score.VERDICTS} | {"lines": s["lines"]}
             held = {a["bank_id"]: a for a in audit}
             for b in proposals:
@@ -176,6 +176,7 @@ def line(s: dict) -> str:
             f" | hallucinated {pct(h['negatives']['hallucinated'])}"
             f" (forced {h['negatives']['forced_match']['k']}, id {h['negatives']['invented_id']['k']},"
             f" value {h['negatives']['invented_value']['k']}, figure {h['negatives']['ungrounded_figure']['k']})"
+            f" | mislabelled citations {h['negatives']['wrong_field']['k']}"
             f" | escaped {pct(h['negatives']['escaped'])} | controls right {pct(h['controls']['correct'])}\n"
             f"  perf: ${p['cost_usd']:.2f} total | ${p['cost_per_100_bank_lines']:.2f} per 100 bank lines"
             f" | {p['median_case_seconds']}s median case | {p['mean_tool_calls']} tool calls/case"

@@ -139,6 +139,14 @@ def test_misquoting_a_stored_value_is_an_invented_value():
     assert (out["invented_value"], out["hallucinated"]) == (1, 1)
 
 
+def test_real_text_cited_under_a_field_the_record_lacks_is_a_wrong_field_not_an_invention():
+    p = proposal("needs_review", ["A-08-014"], reason="insufficient_evidence",
+                 evidence=[{"txn_id": "A-08-014", "field": "txn_type", "value": "ACH DEBIT"}])
+    out = g(case(), p)
+    assert (out["wrong_field"], out["invented_value"], out["hallucinated"]) == (1, 0, 0)
+    assert out["citation_failed"] == 1
+
+
 def test_a_dollar_figure_that_cannot_be_derived_from_the_data_is_ungrounded():
     p = proposal("needs_review", ["A-08-014"], reason="amount_mismatch",
                  explanation="Likely includes a 52.17 late fee per invoice 4471.")
