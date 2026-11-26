@@ -2,15 +2,10 @@
 
 [![tests](https://github.com/CJBachinski/bank-rec-agent/actions/workflows/tests.yml/badge.svg)](https://github.com/CJBachinski/bank-rec-agent/actions/workflows/tests.yml)
 
-*A portfolio project, written as the memo I would hand a client's controller: workflow map, build, test results, rollout, return.*
 
-**To:** Controller, Tallow Creek Supply Co.<br>
-**From:** Chris Bachinski<br>
-**Subject:** Can an AI agent take over the monthly bank reconciliation, and how far should we trust it?
+> Tallow Creek Supply Co. is fictional and every transaction in this repository is synthetic. The data is built to behave like a real month end: two bank exports in different formats, a ledger report with its headers and totals left in, names that disagree between bank and books, and the usual errors. The models, code, tests and results are real. Every number below is generated from the results files in `evals/` by `scripts/build_readme.py`.
 
-> Tallow Creek Supply Co. is fictional and every transaction in this repository is synthetic. The data is built to behave like a real month end: two bank exports in different formats, a ledger report with its headers and totals left in, names that disagree between bank and books, and the usual errors. The models, code, tests and results are real. Every number below is generated from the results files in `evals/` by `scripts/build_readme.py`. I built this with Claude Code.
-
-## 1. Bottom line
+## 1. What it is
 
 An agent built on Claude Sonnet 5.5 can do the part of the bank reconciliation that plain matching rules cannot, and in testing it never cleared a bank line against the wrong entry. I recommend a one-month shadow run before it is allowed to clear anything on its own.
 
