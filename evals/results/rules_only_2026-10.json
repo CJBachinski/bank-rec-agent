@@ -1,0 +1,951 @@
+{
+  "month": "2026-10",
+  "lines": 66,
+  "correct": 40,
+  "false_clear": 0,
+  "left_for_person": 26,
+  "wrong_label": 0,
+  "accuracy": 0.6060606060606061,
+  "by_category": {
+    "bank_fee": {
+      "left_for_person": 2
+    },
+    "card_payout": {
+      "left_for_person": 4
+    },
+    "check": {
+      "correct": 8
+    },
+    "check_deposit": {
+      "correct": 1
+    },
+    "customer_ach": {
+      "correct": 10
+    },
+    "duplicate_entry": {
+      "left_for_person": 1
+    },
+    "interest": {
+      "left_for_person": 1
+    },
+    "lookalike_fee": {
+      "left_for_person": 1
+    },
+    "lookalike_pair": {
+      "left_for_person": 4
+    },
+    "payroll": {
+      "correct": 4
+    },
+    "prior_period_check": {
+      "correct": 2
+    },
+    "returned_item": {
+      "left_for_person": 1
+    },
+    "split_deposit": {
+      "left_for_person": 6
+    },
+    "trade_name_date_gap": {
+      "left_for_person": 3
+    },
+    "transfer": {
+      "correct": 2
+    },
+    "transposed_check": {
+      "correct": 1
+    },
+    "unrecognized_debit": {
+      "left_for_person": 1
+    },
+    "vendor_ach": {
+      "correct": 12,
+      "left_for_person": 2
+    }
+  },
+  "detail": [
+    {
+      "bank_id": "A-10-040",
+      "category": "vendor_ach",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-001"
+      ],
+      "want_gl_ids": [
+        "G-10-001"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "A-10-005",
+      "category": "vendor_ach",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-033"
+      ],
+      "want_gl_ids": [
+        "G-10-033"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "A-10-021",
+      "category": "vendor_ach",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-022"
+      ],
+      "want_gl_ids": [
+        "G-10-022"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "A-10-007",
+      "category": "vendor_ach",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-031"
+      ],
+      "want_gl_ids": [
+        "G-10-031"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "A-10-020",
+      "category": "vendor_ach",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-028"
+      ],
+      "want_gl_ids": [
+        "G-10-028"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "A-10-010",
+      "category": "vendor_ach",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-034"
+      ],
+      "want_gl_ids": [
+        "G-10-034"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "A-10-036",
+      "category": "vendor_ach",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-007"
+      ],
+      "want_gl_ids": [
+        "G-10-007"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "A-10-014",
+      "category": "vendor_ach",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-032"
+      ],
+      "want_gl_ids": [
+        "G-10-032"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "A-10-031",
+      "category": "vendor_ach",
+      "expected": "match",
+      "got": "open",
+      "source": "",
+      "got_gl_ids": [],
+      "want_gl_ids": [
+        "G-10-008"
+      ],
+      "verdict": "left_for_person"
+    },
+    {
+      "bank_id": "A-10-013",
+      "category": "vendor_ach",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-030"
+      ],
+      "want_gl_ids": [
+        "G-10-030"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "A-10-027",
+      "category": "vendor_ach",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-014"
+      ],
+      "want_gl_ids": [
+        "G-10-014"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "A-10-037",
+      "category": "vendor_ach",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-004"
+      ],
+      "want_gl_ids": [
+        "G-10-004"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "A-10-034",
+      "category": "vendor_ach",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-005"
+      ],
+      "want_gl_ids": [
+        "G-10-005"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "A-10-030",
+      "category": "vendor_ach",
+      "expected": "match",
+      "got": "open",
+      "source": "",
+      "got_gl_ids": [],
+      "want_gl_ids": [
+        "G-10-009"
+      ],
+      "verdict": "left_for_person"
+    },
+    {
+      "bank_id": "A-10-033",
+      "category": "check",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-002"
+      ],
+      "want_gl_ids": [
+        "G-10-002"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "A-10-035",
+      "category": "check",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-003"
+      ],
+      "want_gl_ids": [
+        "G-10-003"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "A-10-026",
+      "category": "check",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-006"
+      ],
+      "want_gl_ids": [
+        "G-10-006"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "A-10-025",
+      "category": "check",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-010"
+      ],
+      "want_gl_ids": [
+        "G-10-010"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "A-10-029",
+      "category": "transposed_check",
+      "expected": "review",
+      "got": "review",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-011"
+      ],
+      "want_gl_ids": [
+        "G-10-011"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "A-10-009",
+      "category": "check",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-015"
+      ],
+      "want_gl_ids": [
+        "G-10-015"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "A-10-012",
+      "category": "check",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-017"
+      ],
+      "want_gl_ids": [
+        "G-10-017"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "A-10-017",
+      "category": "check",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-018"
+      ],
+      "want_gl_ids": [
+        "G-10-018"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "A-10-006",
+      "category": "check",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-023"
+      ],
+      "want_gl_ids": [
+        "G-10-023"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "A-10-038",
+      "category": "prior_period_check",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "P-10-02"
+      ],
+      "want_gl_ids": [
+        "P-10-02"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "A-10-039",
+      "category": "prior_period_check",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "P-10-03"
+      ],
+      "want_gl_ids": [
+        "P-10-03"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "A-10-024",
+      "category": "payroll",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-019"
+      ],
+      "want_gl_ids": [
+        "G-10-019"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "A-10-022",
+      "category": "payroll",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-020"
+      ],
+      "want_gl_ids": [
+        "G-10-020"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "A-10-003",
+      "category": "payroll",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-037"
+      ],
+      "want_gl_ids": [
+        "G-10-037"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "A-10-002",
+      "category": "payroll",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-038"
+      ],
+      "want_gl_ids": [
+        "G-10-038"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "D-10-013",
+      "category": "customer_ach",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-056"
+      ],
+      "want_gl_ids": [
+        "G-10-056"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "D-10-001",
+      "category": "customer_ach",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-041"
+      ],
+      "want_gl_ids": [
+        "G-10-041"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "D-10-003",
+      "category": "customer_ach",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-042"
+      ],
+      "want_gl_ids": [
+        "G-10-042"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "D-10-005",
+      "category": "customer_ach",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-050"
+      ],
+      "want_gl_ids": [
+        "G-10-050"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "D-10-017",
+      "category": "customer_ach",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-061"
+      ],
+      "want_gl_ids": [
+        "G-10-061"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "D-10-006",
+      "category": "customer_ach",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-051"
+      ],
+      "want_gl_ids": [
+        "G-10-051"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "D-10-018",
+      "category": "customer_ach",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-064"
+      ],
+      "want_gl_ids": [
+        "G-10-064"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "D-10-014",
+      "category": "customer_ach",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-057"
+      ],
+      "want_gl_ids": [
+        "G-10-057"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "D-10-020",
+      "category": "customer_ach",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-070"
+      ],
+      "want_gl_ids": [
+        "G-10-070"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "D-10-024",
+      "category": "customer_ach",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-068"
+      ],
+      "want_gl_ids": [
+        "G-10-068"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "A-10-016",
+      "category": "lookalike_pair",
+      "expected": "match",
+      "got": "open",
+      "source": "",
+      "got_gl_ids": [],
+      "want_gl_ids": [
+        "G-10-024"
+      ],
+      "verdict": "left_for_person"
+    },
+    {
+      "bank_id": "A-10-019",
+      "category": "lookalike_pair",
+      "expected": "match",
+      "got": "open",
+      "source": "",
+      "got_gl_ids": [],
+      "want_gl_ids": [
+        "G-10-029"
+      ],
+      "verdict": "left_for_person"
+    },
+    {
+      "bank_id": "D-10-016",
+      "category": "lookalike_pair",
+      "expected": "match",
+      "got": "open",
+      "source": "",
+      "got_gl_ids": [],
+      "want_gl_ids": [
+        "G-10-058"
+      ],
+      "verdict": "left_for_person"
+    },
+    {
+      "bank_id": "D-10-015",
+      "category": "lookalike_pair",
+      "expected": "match",
+      "got": "open",
+      "source": "",
+      "got_gl_ids": [],
+      "want_gl_ids": [
+        "G-10-060"
+      ],
+      "verdict": "left_for_person"
+    },
+    {
+      "bank_id": "A-10-015",
+      "category": "trade_name_date_gap",
+      "expected": "match",
+      "got": "open",
+      "source": "",
+      "got_gl_ids": [],
+      "want_gl_ids": [
+        "G-10-013"
+      ],
+      "verdict": "left_for_person"
+    },
+    {
+      "bank_id": "A-10-008",
+      "category": "trade_name_date_gap",
+      "expected": "match",
+      "got": "open",
+      "source": "",
+      "got_gl_ids": [],
+      "want_gl_ids": [
+        "G-10-025"
+      ],
+      "verdict": "left_for_person"
+    },
+    {
+      "bank_id": "A-10-011",
+      "category": "trade_name_date_gap",
+      "expected": "match",
+      "got": "open",
+      "source": "",
+      "got_gl_ids": [],
+      "want_gl_ids": [
+        "G-10-021"
+      ],
+      "verdict": "left_for_person"
+    },
+    {
+      "bank_id": "A-10-018",
+      "category": "duplicate_entry",
+      "expected": "match",
+      "got": "open",
+      "source": "",
+      "got_gl_ids": [],
+      "want_gl_ids": [
+        "G-10-026"
+      ],
+      "verdict": "left_for_person"
+    },
+    {
+      "bank_id": "D-10-009",
+      "category": "card_payout",
+      "expected": "review",
+      "got": "open",
+      "source": "",
+      "got_gl_ids": [],
+      "want_gl_ids": [
+        "G-10-043",
+        "G-10-045",
+        "G-10-046",
+        "G-10-047",
+        "G-10-048"
+      ],
+      "verdict": "left_for_person"
+    },
+    {
+      "bank_id": "D-10-012",
+      "category": "card_payout",
+      "expected": "match",
+      "got": "open",
+      "source": "",
+      "got_gl_ids": [],
+      "want_gl_ids": [
+        "G-10-052",
+        "G-10-054",
+        "G-10-055",
+        "G-10-059"
+      ],
+      "verdict": "left_for_person"
+    },
+    {
+      "bank_id": "D-10-021",
+      "category": "card_payout",
+      "expected": "match",
+      "got": "open",
+      "source": "",
+      "got_gl_ids": [],
+      "want_gl_ids": [
+        "G-10-062",
+        "G-10-063",
+        "G-10-065",
+        "G-10-066",
+        "G-10-067",
+        "G-10-071"
+      ],
+      "verdict": "left_for_person"
+    },
+    {
+      "bank_id": "D-10-025",
+      "category": "card_payout",
+      "expected": "match",
+      "got": "open",
+      "source": "",
+      "got_gl_ids": [],
+      "want_gl_ids": [
+        "G-10-072",
+        "G-10-073",
+        "G-10-074",
+        "G-10-075"
+      ],
+      "verdict": "left_for_person"
+    },
+    {
+      "bank_id": "D-10-004",
+      "category": "split_deposit",
+      "expected": "match",
+      "got": "open",
+      "source": "",
+      "got_gl_ids": [],
+      "want_gl_ids": [
+        "G-10-049"
+      ],
+      "verdict": "left_for_person"
+    },
+    {
+      "bank_id": "D-10-007",
+      "category": "split_deposit",
+      "expected": "match",
+      "got": "open",
+      "source": "",
+      "got_gl_ids": [],
+      "want_gl_ids": [
+        "G-10-049"
+      ],
+      "verdict": "left_for_person"
+    },
+    {
+      "bank_id": "D-10-008",
+      "category": "split_deposit",
+      "expected": "match",
+      "got": "open",
+      "source": "",
+      "got_gl_ids": [],
+      "want_gl_ids": [
+        "G-10-049"
+      ],
+      "verdict": "left_for_person"
+    },
+    {
+      "bank_id": "D-10-019",
+      "category": "split_deposit",
+      "expected": "match",
+      "got": "open",
+      "source": "",
+      "got_gl_ids": [],
+      "want_gl_ids": [
+        "G-10-069"
+      ],
+      "verdict": "left_for_person"
+    },
+    {
+      "bank_id": "D-10-022",
+      "category": "split_deposit",
+      "expected": "match",
+      "got": "open",
+      "source": "",
+      "got_gl_ids": [],
+      "want_gl_ids": [
+        "G-10-069"
+      ],
+      "verdict": "left_for_person"
+    },
+    {
+      "bank_id": "D-10-023",
+      "category": "split_deposit",
+      "expected": "match",
+      "got": "open",
+      "source": "",
+      "got_gl_ids": [],
+      "want_gl_ids": [
+        "G-10-069"
+      ],
+      "verdict": "left_for_person"
+    },
+    {
+      "bank_id": "D-10-002",
+      "category": "check_deposit",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-044"
+      ],
+      "want_gl_ids": [
+        "G-10-044"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "D-10-010",
+      "category": "returned_item",
+      "expected": "bank_only",
+      "got": "open",
+      "source": "",
+      "got_gl_ids": [],
+      "want_gl_ids": [],
+      "verdict": "left_for_person"
+    },
+    {
+      "bank_id": "A-10-001",
+      "category": "bank_fee",
+      "expected": "bank_only",
+      "got": "open",
+      "source": "",
+      "got_gl_ids": [],
+      "want_gl_ids": [],
+      "verdict": "left_for_person"
+    },
+    {
+      "bank_id": "A-10-028",
+      "category": "bank_fee",
+      "expected": "bank_only",
+      "got": "open",
+      "source": "",
+      "got_gl_ids": [],
+      "want_gl_ids": [],
+      "verdict": "left_for_person"
+    },
+    {
+      "bank_id": "A-10-023",
+      "category": "lookalike_fee",
+      "expected": "match",
+      "got": "open",
+      "source": "",
+      "got_gl_ids": [],
+      "want_gl_ids": [
+        "G-10-016"
+      ],
+      "verdict": "left_for_person"
+    },
+    {
+      "bank_id": "D-10-026",
+      "category": "interest",
+      "expected": "bank_only",
+      "got": "open",
+      "source": "",
+      "got_gl_ids": [],
+      "want_gl_ids": [],
+      "verdict": "left_for_person"
+    },
+    {
+      "bank_id": "A-10-004",
+      "category": "unrecognized_debit",
+      "expected": "bank_only",
+      "got": "open",
+      "source": "",
+      "got_gl_ids": [],
+      "want_gl_ids": [],
+      "verdict": "left_for_person"
+    },
+    {
+      "bank_id": "A-10-032",
+      "category": "transfer",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-012"
+      ],
+      "want_gl_ids": [
+        "G-10-012"
+      ],
+      "verdict": "correct"
+    },
+    {
+      "bank_id": "D-10-011",
+      "category": "transfer",
+      "expected": "match",
+      "got": "cleared",
+      "source": "rule",
+      "got_gl_ids": [
+        "G-10-053"
+      ],
+      "want_gl_ids": [
+        "G-10-053"
+      ],
+      "verdict": "correct"
+    }
+  ],
+  "config": "rules_only",
+  "seconds": 0.0025,
+  "rule_counts": {
+    "cleared": 39,
+    "review": 1
+  }
+}
