@@ -1,6 +1,7 @@
 {
  "kind": "estimate",
  "minutes": 40,
- "source": "an experienced practitioner who has done bank reconciliations many times, asked in conversation",
+ "who": "an experienced accountant",
+ "source": "an experienced accountant, who said it would take around 40 minutes",
  "note": "Not a timed session. Recorded on 2026-11-26 from what the author reported being told. Superseded automatically once scripts/time_manual.py and scripts/time_review.py have both been run."
 }

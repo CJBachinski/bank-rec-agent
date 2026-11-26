@@ -185,6 +185,7 @@ def time_block(*, manual: dict | None, review: dict | None, estimate: dict | Non
         }
     if estimate:
         m = float(estimate["minutes"])
+        who = estimate.get("who", "an experienced practitioner")
         rows, values = [], []
         for r in REVIEW_SCENARIOS:
             total = agent_min + r
@@ -203,12 +204,12 @@ def time_block(*, manual: dict | None, review: dict | None, estimate: dict | Non
         return {
             "headline": f"{low:.0f} to {high:.0f} minutes of an estimated {m:.0f} (the manual time is an estimate)",
             "note": ("**The time-saved figure rests on an estimate.** The agent's run time is measured. The manual "
-                     "time is an experienced practitioner's estimate, not a timed session, and the review time has "
+                     f"time is {who}'s estimate, not a timed session, and the review time has "
                      "not been timed. Section 6 shows the range."),
             "section": section,
             "roi": ("Value of the time saved per reconciliation, at three costs of an hour of staff time:\n\n"
                     + _table(["If the review takes"] + [f"${r} an hour" for r in HOURLY_RATES], values)),
-            "limit": ("**The time saved rests on an estimate.** One practitioner's estimate of the manual time, and "
+            "limit": (f"**The time saved rests on an estimate.** One estimate of the manual time, from {who}, and "
                       "a review that has not been timed. See section 6."),
         }
     return {

@@ -142,3 +142,12 @@ def test_two_timed_sessions_replace_the_estimate():
     assert block["headline"] == "30 minutes (76%)"
     assert "13 of 14 reconciling items found" in block["section"]
     assert "measured" in block["note"]
+
+
+def test_the_memo_names_the_estimates_source_the_way_the_record_does():
+    estimate = {"minutes": 40, "who": "an experienced accountant",
+                "source": "an experienced accountant, who said it would take around 40 minutes"}
+    block = timing.time_block(manual=None, review=None, estimate=estimate, **AGENT)
+    assert "an experienced accountant's estimate" in block["note"]
+    assert "from an experienced accountant" in block["limit"]
+    assert "Estimate from an experienced accountant, who said it would take around 40 minutes." in block["section"]

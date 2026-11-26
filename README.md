@@ -24,7 +24,7 @@ Three things to know before reading further:
 
 1. **Zero is not a guarantee.** No wrong clears in 78 agent decisions means the true rate is probably below 4.7%, not that it is zero. Section 7 says what this evidence cannot show.
 2. **The agent proposes; code decides.** The model has read-only access. A separate verifier checks every id, every quoted value and every sum before anything is cleared. Section 3 explains the split.
-3. **The time-saved figure rests on an estimate.** The agent's run time is measured. The manual time is an experienced practitioner's estimate, not a timed session, and the review time has not been timed. Section 6 shows the range.
+3. **The time-saved figure rests on an estimate.** The agent's run time is measured. The manual time is an experienced accountant's estimate, not a timed session, and the review time has not been timed. Section 6 shows the range.
 
 ## 2. Workflow map
 
@@ -235,7 +235,7 @@ What stays with a person: anything in the review queue, every journal entry, and
 
 |  | Result | Basis |
 |---|---|---|
-| Reconciling a month by hand | about 40 minutes | Estimate from an experienced practitioner who has done bank reconciliations many times, asked in conversation. It is not a timed session on this data. |
+| Reconciling a month by hand | about 40 minutes | Estimate from an experienced accountant, who said it would take around 40 minutes. It is not a timed session on this data. |
 | Agent run for a month | 2.7 minutes of model time | Measured |
 | Working the agent's review queue | 7 items | Not yet timed |
 
@@ -270,7 +270,7 @@ The API cost on the other side of that is $0.48 per 100 bank lines, which for th
 - **The test has stopped discriminating at the top.** Three models scoring 99% to 100% means the set is too easy to rank them. Harder cases are the next thing to build.
 - **Zeros have wide error bars.** 0 hallucinations in 60 trials bounds the rate below about 6.0% for that model. Pooling every run in this repository (11 runs, 540 trials, 0 hallucinations) brings it below 0.7%, but that mixes models and prompts, and repeated runs of the same case are not independent trials.
 - **Small numbers behind each fix.** Each prompt change moved a handful of cases. The direction is clear; the size is not precise.
-- **The time saved rests on an estimate.** One practitioner's estimate of the manual time, and a review that has not been timed. See section 6.
+- **The time saved rests on an estimate.** One estimate of the manual time, from an experienced accountant, and a review that has not been timed. See section 6.
 
 ## 8. Run it
 
