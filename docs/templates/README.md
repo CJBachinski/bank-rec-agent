@@ -18,13 +18,13 @@ An agent built on {{deploy.model}} can do the part of the bank reconciliation th
 | Hallucinations on the {{test.negatives}}-case trap set | {{test.v3.sonnet.hallucinated}} in {{test.v3.sonnet.neg_trials}} trials |
 | API cost | {{test.v3.sonnet.cost_per_100}} per 100 bank lines |
 | Model time for the month | {{test.v3.sonnet.month_minutes}} minutes |
-| Staff time saved | {{timing.time_saved_short}} |
+| Staff time saved per month | {{timing.headline}} |
 
 Three things to know before reading further:
 
 1. **Zero is not a guarantee.** No wrong clears in {{test.v3.sonnet.agent_trials}} agent decisions means the true rate is probably below {{test.v3.sonnet.false_clear_upper}}, not that it is zero. Section 7 says what this evidence cannot show.
 2. **The agent proposes; code decides.** The model has read-only access. A separate verifier checks every id, every quoted value and every sum before anything is cleared. Section 3 explains the split.
-3. **The time-saved figure is measured, not estimated.** It comes from two timed sessions by one person. Until both are done it reads "{{timing.time_saved_short}}".
+3. {{timing.note}}
 
 ## 2. Workflow map
 
@@ -187,20 +187,15 @@ What stays with a person: anything in the review queue, every journal entry, and
 
 ## 6. Return
 
-**Time.** Measured by two timed sessions, same person:
+**Time.**
 
-| | Result |
-|---|---|
-| Reconciling a month by hand | {{timing.manual_minutes}} ({{timing.manual_detail}}) |
-| Agent run for a month | {{timing.agent_minutes}} of model time |
-| Working the agent's review queue | {{timing.review_minutes}} ({{timing.review_detail}}) |
-| Time saved | {{timing.time_saved}} |
-
-The manual session is done on the development month and the review session on the held-out month, so the reviewer has not already seen the answers. The manual time is scaled by bank lines to compare like with like. One person and one trial each: treat it as an indication, not a benchmark.
+{{timing.section}}
 
 **Money.**
 
-{{timing.roi_table}}
+{{timing.roi}}
+
+For one small company this is a modest sum. The case for the agent is volume: the same build, tested once per client, repeated across every account a firm reconciles each month.
 
 The API cost on the other side of that is {{test.v3.sonnet.cost_per_100}} per 100 bank lines, which for this company is {{test.v3.sonnet.month_cost}} a month. The cost that matters is not the API. It is the review time, and the one-off work of testing the agent on each new client's data.
 
@@ -211,7 +206,7 @@ The API cost on the other side of that is {{test.v3.sonnet.cost_per_100}} per 10
 - **The test has stopped discriminating at the top.** Three models scoring {{test.v3.haiku.correct_pct}} to {{test.v3.opus.correct_pct}} means the set is too easy to rank them. Harder cases are the next thing to build.
 - **Zeros have wide error bars.** {{test.v3.sonnet.hallucinated}} hallucinations in {{test.v3.sonnet.neg_trials}} trials bounds the rate below about {{test.v3.sonnet.hallucinated_upper}} for that model. Pooling every run in this repository ({{all.runs}} runs, {{all.neg_trials}} trials, {{all.hallucinated}} hallucinations) brings it below {{all.hallucinated_upper}}, but that mixes models and prompts, and repeated runs of the same case are not independent trials.
 - **Small numbers behind each fix.** Each prompt change moved a handful of cases. The direction is clear; the size is not precise.
-- **Timing is one person.** See section 6.
+- {{timing.limit}}
 
 ## 8. Run it
 

@@ -101,3 +101,44 @@ def test_agreeing_with_a_wrong_agent_is_scored_wrong_and_blanks_are_undecided():
 def test_timing_record_round_trips(tmp_path):
     path = timing.save(tmp_path, "manual_2026-09", {"seconds": 1234.5, "bank_lines": 65})
     assert json.loads(path.read_text())["seconds"] == 1234.5
+
+
+# -- what the memo may say about time, depending on what was actually measured ------
+
+AGENT = dict(agent_seconds=162.0, queue_items=7)
+
+
+def test_with_nothing_recorded_the_memo_says_not_yet_measured():
+    block = timing.time_block(manual=None, review=None, estimate=None, **AGENT)
+    assert block["headline"] == "not yet measured"
+    assert "not yet measured" in block["section"]
+
+
+def test_an_estimate_is_shown_as_an_estimate_and_never_called_measured():
+    estimate = {"minutes": 40, "source": "an experienced practitioner, in conversation"}
+    block = timing.time_block(manual=None, review=None, estimate=estimate, **AGENT)
+    assert "estimate" in block["headline"] and "40" in block["headline"]
+    assert "not a timed session" in block["section"]
+    assert "an experienced practitioner, in conversation" in block["section"]
+    assert "measured, not estimated" not in block["note"]
+    assert "estimate" in block["note"] and "estimate" in block["limit"]
+
+
+def test_an_estimate_gives_a_range_because_the_review_time_is_still_unknown():
+    estimate = {"minutes": 40, "source": "x"}
+    block = timing.time_block(manual=None, review=None, estimate=estimate, **AGENT)
+    # 40 minutes less 2.7 of model time, less 5, 10 or 15 minutes of review
+    assert "| 5 minutes | 7.7 minutes | 32.3 minutes | 81% |" in block["section"]
+    assert "| 15 minutes | 17.7 minutes | 22.3 minutes | 56% |" in block["section"]
+    assert block["headline"].startswith("22 to 32 minutes")
+
+
+def test_two_timed_sessions_replace_the_estimate():
+    manual = {"seconds": 2400.0, "minutes": 40.0, "bank_lines": 65, "found": 13, "reconciling_items": 14, "extra": 0}
+    review = {"seconds": 420.0, "minutes": 7.0, "bank_lines": 65, "queue_items": 7, "correct": 7, "items": 7,
+              "agent_model_seconds": 162.0}
+    block = timing.time_block(manual=manual, review=review, estimate={"minutes": 99, "source": "x"}, **AGENT)
+    assert "estimate" not in block["headline"]
+    assert block["headline"] == "30 minutes (76%)"
+    assert "13 of 14 reconciling items found" in block["section"]
+    assert "measured" in block["note"]

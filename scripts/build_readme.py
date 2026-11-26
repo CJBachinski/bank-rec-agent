@@ -27,7 +27,6 @@ OUTPUTS = {"README.md": ROOT / "README.md", "CHANGELOG.md": ROOT / "prompts" / "
            "POSTING_MAP.md": ROOT / "docs" / "POSTING_MAP.md"}
 NAMES = {"claude-haiku-5-5": "Claude Haiku 5.5", "claude-sonnet-5-5": "Claude Sonnet 5.5",
          "claude-opus-5-5": "Claude Opus 5.5"}
-PENDING = "not yet measured"
 
 
 def pct(k, n):
@@ -171,37 +170,26 @@ class Report:
 
     # -- timing ----------------------------------------------------------------
     def timing(self):
-        out = {}
-        manual = sorted((ROOT / "evals" / "timing").glob("manual_*.json"))
-        review = sorted((ROOT / "evals" / "timing").glob("review_*.json"))
-        m = json.loads(manual[-1].read_text()) if manual else None
-        r = json.loads(review[-1].read_text()) if review else None
-        out["manual_minutes"] = f"{m['minutes']:.1f} minutes" if m else PENDING
-        out["manual_detail"] = (f"{m['bank_lines']} bank lines, {m['found']} of {m['reconciling_items']} reconciling "
-                                f"items found, {m['extra']} listed in error" if m else PENDING)
-        out["review_minutes"] = f"{r['minutes']:.1f} minutes" if r else PENDING
-        out["review_detail"] = (f"{r['queue_items']} queue items, {r['correct']} of {r['items']} decided correctly"
-                                if r else PENDING)
-        out["agent_minutes"] = f"{r['agent_model_seconds'] / 60:.1f} minutes" if r else PENDING
-        if m and r:
-            manual_scaled = m["seconds"] / m["bank_lines"] * r["bank_lines"]
-            with_agent = r["seconds"] + r["agent_model_seconds"]
-            saved = manual_scaled - with_agent
-            out["time_saved"] = (f"{saved / 60:.1f} minutes per month for these two accounts "
-                                 f"({100 * saved / manual_scaled:.0f}% of the manual time)")
-            out["time_saved_short"] = f"{saved / 60:.0f} minutes ({100 * saved / manual_scaled:.0f}%)"
-            out["manual_scaled_minutes"] = f"{manual_scaled / 60:.1f} minutes"
-            out["with_agent_minutes"] = f"{with_agent / 60:.1f} minutes"
-            hours = saved / 3600
-            out["roi_table"] = table(
-                ["Loaded cost of an hour of staff time", "Value of time saved per month", "Value per year"],
-                [[usd(rate_, 0), usd(hours * rate_), usd(hours * rate_ * 12)] for rate_ in (35, 50, 75)])
-        else:
-            for k in ("time_saved", "time_saved_short", "manual_scaled_minutes", "with_agent_minutes"):
-                out[k] = PENDING
-            out["roi_table"] = (f"_The value of the time saved is {PENDING}: it needs the two timed sessions "
-                                f"described above._")
-        return {f"timing.{k}": v for k, v in out.items()}
+        """Wording for time saved, matched to the evidence on disk (see evals/timing.time_block)."""
+        from evals import timing
+        from evals.run import _read
+
+        folder = ROOT / "evals" / "timing"
+        manual = sorted(folder.glob("manual_*.json"))
+        review = sorted(folder.glob("review_*.json"))
+        estimate = folder / "estimate_manual.json"
+        deploy = self.manifest["deploy"]
+        month = answer_key("test")["month"]
+        rows = [r for r in _read(RUNS / deploy / "results.jsonl") if r["kind"] == "main" and r["rep"] == 1]
+        conn = pipeline.prepare(month)
+        pipeline.apply_decisions(conn, month, {r["case_id"].split(":", 1)[1]: r["proposal"] for r in rows}, self.p)
+        block = timing.time_block(
+            manual=json.loads(manual[-1].read_text()) if manual else None,
+            review=json.loads(review[-1].read_text()) if review else None,
+            estimate=json.loads(estimate.read_text()) if estimate.exists() else None,
+            agent_seconds=self.s(deploy)["perf"]["month_model_seconds"],
+            queue_items=len(timing.review_queue(conn, month)))
+        return {f"timing.{k}": v for k, v in block.items()}
 
     # -- everything ------------------------------------------------------------
     def values(self):

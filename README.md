@@ -18,13 +18,13 @@ An agent built on Claude Sonnet 5.5 can do the part of the bank reconciliation t
 | Hallucinations on the 20-case trap set | 0 in 60 trials |
 | API cost | $0.48 per 100 bank lines |
 | Model time for the month | 2.7 minutes |
-| Staff time saved | not yet measured |
+| Staff time saved per month | 22 to 32 minutes of an estimated 40 (the manual time is an estimate) |
 
 Three things to know before reading further:
 
 1. **Zero is not a guarantee.** No wrong clears in 78 agent decisions means the true rate is probably below 4.7%, not that it is zero. Section 7 says what this evidence cannot show.
 2. **The agent proposes; code decides.** The model has read-only access. A separate verifier checks every id, every quoted value and every sum before anything is cleared. Section 3 explains the split.
-3. **The time-saved figure is measured, not estimated.** It comes from two timed sessions by one person. Until both are done it reads "not yet measured".
+3. **The time-saved figure rests on an estimate.** The agent's run time is measured. The manual time is an experienced practitioner's estimate, not a timed session, and the review time has not been timed. Section 6 shows the range.
 
 ## 2. Workflow map
 
@@ -231,20 +231,35 @@ What stays with a person: anything in the review queue, every journal entry, and
 
 ## 6. Return
 
-**Time.** Measured by two timed sessions, same person:
+**Time.**
 
-| | Result |
-|---|---|
-| Reconciling a month by hand | not yet measured (not yet measured) |
-| Agent run for a month | not yet measured of model time |
-| Working the agent's review queue | not yet measured (not yet measured) |
-| Time saved | not yet measured |
+|  | Result | Basis |
+|---|---|---|
+| Reconciling a month by hand | about 40 minutes | Estimate from an experienced practitioner who has done bank reconciliations many times, asked in conversation. It is not a timed session on this data. |
+| Agent run for a month | 2.7 minutes of model time | Measured |
+| Working the agent's review queue | 7 items | Not yet timed |
 
-The manual session is done on the development month and the review session on the held-out month, so the reviewer has not already seen the answers. The manual time is scaled by bank lines to compare like with like. One person and one trial each: treat it as an indication, not a benchmark.
+Because the review has not been timed, the saving is shown for three possible review times:
+
+| If the review takes | Total with the agent | Time saved | Share of the manual estimate |
+|---|---:|---:|---:|
+| 5 minutes | 7.7 minutes | 32.3 minutes | 81% |
+| 10 minutes | 12.7 minutes | 27.3 minutes | 68% |
+| 15 minutes | 17.7 minutes | 22.3 minutes | 56% |
+
+Two timed sessions (`scripts/time_manual.py` and `scripts/time_review.py`) would replace this table with a measured figure.
 
 **Money.**
 
-_The value of the time saved is not yet measured: it needs the two timed sessions described above._
+Value of the time saved per reconciliation, at three costs of an hour of staff time:
+
+| If the review takes | $35 an hour | $50 an hour | $75 an hour |
+|---|---:|---:|---:|
+| 5 minutes | $18.84 | $26.92 | $40.38 |
+| 10 minutes | $15.93 | $22.75 | $34.12 |
+| 15 minutes | $13.01 | $18.58 | $27.88 |
+
+For one small company this is a modest sum. The case for the agent is volume: the same build, tested once per client, repeated across every account a firm reconciles each month.
 
 The API cost on the other side of that is $0.48 per 100 bank lines, which for this company is $0.32 a month. The cost that matters is not the API. It is the review time, and the one-off work of testing the agent on each new client's data.
 
@@ -255,7 +270,7 @@ The API cost on the other side of that is $0.48 per 100 bank lines, which for th
 - **The test has stopped discriminating at the top.** Three models scoring 99% to 100% means the set is too easy to rank them. Harder cases are the next thing to build.
 - **Zeros have wide error bars.** 0 hallucinations in 60 trials bounds the rate below about 6.0% for that model. Pooling every run in this repository (11 runs, 540 trials, 0 hallucinations) brings it below 0.7%, but that mixes models and prompts, and repeated runs of the same case are not independent trials.
 - **Small numbers behind each fix.** Each prompt change moved a handful of cases. The direction is clear; the size is not precise.
-- **Timing is one person.** See section 6.
+- **The time saved rests on an estimate.** One practitioner's estimate of the manual time, and a review that has not been timed. See section 6.
 
 ## 8. Run it
 

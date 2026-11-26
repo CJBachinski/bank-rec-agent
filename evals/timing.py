@@ -133,3 +133,91 @@ def stopwatch(prompt_start: str, prompt_stop: str) -> float:
         else:
             started = time.monotonic()
             print("Running.")
+
+
+# -- what the memo may say about time ------------------------------------------------
+
+REVIEW_SCENARIOS = (5, 10, 15)          # minutes, used only while the review has not been timed
+HOURLY_RATES = (35, 50, 75)             # loaded cost of an hour of staff time, for the sensitivity table
+
+
+def _table(header, rows, text: bool = False) -> str:
+    """A markdown table. Columns after the first are right-aligned unless they hold text."""
+    out = ["| " + " | ".join(header) + " |",
+           "|" + "|".join(["---"] + ["---" if text else "---:"] * (len(header) - 1)) + "|"]
+    return "\n".join(out + ["| " + " | ".join(str(c) for c in r) + " |" for r in rows])
+
+
+def time_block(*, manual: dict | None, review: dict | None, estimate: dict | None,
+               agent_seconds: float, queue_items: int) -> dict:
+    """The time-saved wording for the memo, matched to the evidence that exists.
+
+    Three states, and the text never claims more than its state supports:
+      measured  both timed sessions were run
+      estimate  someone experienced estimated the manual time; nothing was timed by hand
+      none      neither
+    """
+    agent_min = agent_seconds / 60
+    if manual and review:
+        manual_scaled = manual["seconds"] / manual["bank_lines"] * review["bank_lines"]
+        with_agent = review["seconds"] + review["agent_model_seconds"]
+        saved = manual_scaled - with_agent
+        share = f"{100 * saved / manual_scaled:.0f}%"
+        hours = saved / 3600
+        section = _table(["", "Result"], [
+            ["Reconciling a month by hand", f"{manual['minutes']:.1f} minutes ({manual['bank_lines']} bank lines, "
+             f"{manual['found']} of {manual['reconciling_items']} reconciling items found, {manual['extra']} listed in error)"],
+            ["Agent run for a month", f"{review['agent_model_seconds'] / 60:.1f} minutes of model time"],
+            ["Working the agent's review queue", f"{review['minutes']:.1f} minutes ({review['queue_items']} queue items, "
+             f"{review['correct']} of {review['items']} decided correctly)"],
+            ["Time saved", f"{saved / 60:.1f} minutes per month for these two accounts ({share} of the manual time)"],
+        ], text=True) + ("\n\nMeasured by two timed sessions, same person. The manual session is done on the development month "
+              "and the review session on the held-out month, so the reviewer has not already seen the answers. "
+              "The manual time is scaled by bank lines to compare like with like. One person and one trial each: "
+              "treat it as an indication, not a benchmark.")
+        return {
+            "headline": f"{saved / 60:.0f} minutes ({share})",
+            "note": "**The time-saved figure is measured.** It comes from two timed sessions by one person.",
+            "section": section,
+            "roi": _table(["Loaded cost of an hour of staff time", "Value of time saved per month", "Value per year"],
+                          [[f"${r}", f"${hours * r:,.2f}", f"${hours * r * 12:,.2f}"] for r in HOURLY_RATES]),
+            "limit": "**Timing is one person.** One trial each of the manual and review sessions. See section 6.",
+        }
+    if estimate:
+        m = float(estimate["minutes"])
+        rows, values = [], []
+        for r in REVIEW_SCENARIOS:
+            total = agent_min + r
+            rows.append([f"{r} minutes", f"{total:.1f} minutes", f"{m - total:.1f} minutes", f"{100 * (m - total) / m:.0f}%"])
+            values.append([f"{r} minutes"] + [f"${(m - total) / 60 * rate:,.2f}" for rate in HOURLY_RATES])
+        low, high = m - agent_min - REVIEW_SCENARIOS[-1], m - agent_min - REVIEW_SCENARIOS[0]
+        section = _table(["", "Result", "Basis"], [
+            ["Reconciling a month by hand", f"about {m:.0f} minutes",
+             f"Estimate from {estimate['source']}. It is not a timed session on this data."],
+            ["Agent run for a month", f"{agent_min:.1f} minutes of model time", "Measured"],
+            ["Working the agent's review queue", f"{queue_items} items", "Not yet timed"],
+        ], text=True) + ("\n\nBecause the review has not been timed, the saving is shown for three possible review times:\n\n"
+              + _table(["If the review takes", "Total with the agent", "Time saved", "Share of the manual estimate"], rows)
+              + "\n\nTwo timed sessions (`scripts/time_manual.py` and `scripts/time_review.py`) would replace this "
+                "table with a measured figure.")
+        return {
+            "headline": f"{low:.0f} to {high:.0f} minutes of an estimated {m:.0f} (the manual time is an estimate)",
+            "note": ("**The time-saved figure rests on an estimate.** The agent's run time is measured. The manual "
+                     "time is an experienced practitioner's estimate, not a timed session, and the review time has "
+                     "not been timed. Section 6 shows the range."),
+            "section": section,
+            "roi": ("Value of the time saved per reconciliation, at three costs of an hour of staff time:\n\n"
+                    + _table(["If the review takes"] + [f"${r} an hour" for r in HOURLY_RATES], values)),
+            "limit": ("**The time saved rests on an estimate.** One practitioner's estimate of the manual time, and "
+                      "a review that has not been timed. See section 6."),
+        }
+    return {
+        "headline": "not yet measured",
+        "note": ("**The time-saved figure is not yet measured.** It needs two timed sessions by one person. "
+                 "Nothing is estimated in its place."),
+        "section": ("Time saved is not yet measured. It needs two timed sessions: `scripts/time_manual.py` and "
+                    f"`scripts/time_review.py`. The agent's own run takes {agent_min:.1f} minutes of model time and "
+                    f"leaves {queue_items} items for review."),
+        "roi": "_The value of the time saved is not yet measured._",
+        "limit": "**Time saved is not yet measured.** See section 6.",
+    }
