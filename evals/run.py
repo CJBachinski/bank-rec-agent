@@ -18,7 +18,7 @@ Nothing is graded here. Grades are recomputed from the saved proposals by
 evals/summarize.py, so a change to the grader or the policy never needs a new
 paid run. Restarting a run skips what is already in results.jsonl.
 
-    doppler run -p bv -c dev --only-secrets ANTHROPIC_API_KEY -- \\
+    doppler run --only-secrets ANTHROPIC_API_KEY -- \\
         uv run python -m evals.run --name dev-v1-sonnet --split dev --prompt v1 --model claude-sonnet-5-5
     uv run python -m evals.run --name harness-oracle --split dev --model oracle     # free
 """
